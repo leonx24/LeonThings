@@ -1,0 +1,76 @@
+  @import "tailwindcss";  
+
+:root {
+  --primary: 251, 191, 36;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: black;
+  color: white;
+  overflow-x: hidden;
+}
+
+* {
+  cursor: none;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+
+  50% {
+    transform: translateY(-30px) translateX(20px);
+  }
+
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+@media (min-width: 768px) {
+  * {
+    cursor: none;
+  }
+}
+
+.ripple {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(var(--primary), 0.7);
+  border-radius: 9999px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: rippleEffect 0.7s ease-out forwards;
+  z-index: 9997;
+}
+
+@keyframes rippleEffect {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+  }
+}

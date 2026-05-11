@@ -94,7 +94,7 @@ const AboutSection = () => {
           <div className="relative w-72 h-72 md:w-80 md:h-80">
 
             {/* Border dekorasi */}
-            <div className="absolute -inset-3 border border-amber-400/20 rounded-lg rotate-3" />
+            <div className="absolute -inset-3 border border-[rgb(var(--primary))]/20 rounded-lg rotate-3" />
             <div className="absolute -inset-3 border border-white/5 rounded-lg -rotate-3" />
 
             {/* Foto atau placeholder */}

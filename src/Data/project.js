@@ -2,6 +2,7 @@
 import LeonImage from "../assets/images/me.png";
 import RobloxImage from "../assets/images/roblox.png";
 import SeminarImage from "../assets/images/seminar.png";
+import TabImage from "../assets/images/customtab.png";
 export const personalInfo = {
   name: "Affa Van Leon",
   tagline: "Web & UI Developer",
@@ -41,13 +42,14 @@ export const projects = [
     github: "https://github.com/...",
     demo: "https://www.roblox.com/games/103008305820216/Method-20-Cashback-Robux",
   },
+  
   {
     id: 2,
-    title: "Aplikasi Seminar",
-    description: "Sebuah Aplikasi untuk mendaftar seminar. dengan fitur login,register,submit seminar",
-    tags: ["XML", "Kotlin"],
-    image: SeminarImage,
-    github: "https://github.com/affaririzkyf/UTS_Mobile1.git",
-    demo: null,
+    title: "Custom Tab",
+    description: "Sebuah Custom tab browser, yg saya buat agar terlihat lebih profesional",
+    tags: ["React", "Tailwind CSS"],
+    image: TabImage,
+    github: "https://github.com/affaririzkyf/custom-tab.git",
+    demo: "https://custom-tab-ten.vercel.app",
   },
 ];

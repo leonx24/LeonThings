@@ -3,6 +3,7 @@ import LeonImage from "../assets/images/me.png";
 import RobloxImage from "../assets/images/roblox.png";
 import SeminarImage from "../assets/images/seminar.png";
 import TabImage from "../assets/images/customtab.png";
+import BotImage from "../assets/images/leonbot.png";
 export const personalInfo = {
   name: "Affa Van Leon",
   tagline: "Web & UI Developer",
@@ -16,11 +17,10 @@ export const personalInfo = {
 
 export const skills = [ 
   { name: "React", category: "Frontend" },
+  { name: "Python", category: "Frontend" },
   { name: "Tailwind CSS", category: "Frontend" },
   { name: "JavaScript", category: "Frontend" },
-  { name: "HTML & CSS", category: "Frontend" },
   { name: "Kotlin", category: "Frontend" },
-  { name: "XML", category: "Frontend" },
   { name: "Luau", category: "Frontend"}, 
   { name: "Laravel", category: "Frontend"},
   { name: "Git & GitHub", category: "Tools" },
@@ -52,4 +52,24 @@ export const projects = [
     github: "https://github.com/affaririzkyf/custom-tab.git",
     demo: "https://custom-tab-ten.vercel.app",
   },
+{
+  id: 3,
+  title: "LeonBot Discord",
+  description:
+    "Futuristic multipurpose Discord bot with economy system, leveling XP, moderation tools, welcome system, reaction roles, and interactive minigames built using discord.py.",
+
+  tags: [
+    "Python",
+    "discord.py",
+    "MongoDB",
+    "Railway",
+    "Discord API",
+  ],
+
+  image: BotImage,
+
+  github: "https://github.com/username/leonbot",
+
+  demo: "https://leonbot-web.vercel.app",
+}
 ];

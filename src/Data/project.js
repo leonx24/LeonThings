@@ -19,7 +19,6 @@ export const skills = [
   { name: "React", category: "Frontend" },
   { name: "Python", category: "Frontend" },
   { name: "Tailwind CSS", category: "Frontend" },
-  { name: "JavaScript", category: "Frontend" },
   { name: "Kotlin", category: "Frontend" },
   { name: "Luau", category: "Frontend"}, 
   { name: "Laravel", category: "Frontend"},
@@ -33,25 +32,44 @@ export const skills = [
 ];
 
 export const projects = [
-  {
-    id: 1,
-    title: "Map Roblox",
-    description: "Project ini saya buat untuk mendampatkan agar anda membeli barang di roblox dan mendapatkan cashback robux sekitar 20%.",
-    tags: ["Luau"],
-    image: RobloxImage  ,
-    github: "https://github.com/...",
-    demo: "https://www.roblox.com/games/103008305820216/Method-20-Cashback-Robux",
-  },
-  
-  {
-    id: 2,
-    title: "Custom Tab",
-    description: "Sebuah Custom tab browser, yg saya buat agar terlihat lebih profesional",
-    tags: ["React", "Tailwind CSS"],
-    image: TabImage,
-    github: "https://github.com/affaririzkyf/custom-tab.git",
-    demo: "https://custom-tab-ten.vercel.app",
-  },
+{
+  id: 1,
+
+  title: "Roblox Cashback Map",
+
+  description:
+    "A Roblox game project designed to provide users with cashback rewards in Robux after purchasing selected in-game items. Built using Luau scripting with custom gameplay systems.",
+
+  tags: ["Luau", "Roblox Studio"],
+
+  image: RobloxImage,
+
+  github: null,
+
+  demo: "https://www.roblox.com/games/103008305820216/Method-20-Cashback-Robux",
+},
+
+{
+  id: 2,
+
+  title: "Custom Browser Tab",
+
+  description:
+    "A futuristic custom browser start page built with React and Tailwind CSS featuring modern UI design, productivity widgets, and aesthetic dashboard components.",
+
+  tags: [
+    "React",
+    "Tailwind CSS",
+    "Vite",
+    "JavaScript",
+  ],
+
+  image: TabImage,
+
+  github: "https://github.com/affaririzkyf/custom-tab.git",
+
+  demo: "https://custom-tab-ten.vercel.app",
+},
 {
   id: 3,
   title: "LeonBot Discord",

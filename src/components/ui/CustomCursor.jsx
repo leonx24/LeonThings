@@ -91,7 +91,7 @@ const CustomCursor = () => {
         <>
           {/* SPOTLIGHT */}
           <div
-            className="fixed inset-0 pointer-events-none z-[1]"
+            className="fixed inset-0 pointer-events-none z-1"
             style={{
               background: `radial-gradient(
                 350px at ${mouse.x}px ${mouse.y}px,
@@ -103,13 +103,13 @@ const CustomCursor = () => {
 
           {/* GLOW */}
           <div
-            className="fixed top-0 left-0 z-[9998] pointer-events-none"
+            className="fixed top-0 left-0 z-[9998 pointer-events-none"
             style={{
               transform: `translate(${mouse.x - 75}px, ${mouse.y - 75}px)`,
             }}
           >
             <div
-              className="w-[150px] h-[150px] rounded-full blur-3xl"
+              className="w-150px h-150px rounded-full blur-3xl"
               style={{
                 background: "rgba(var(--primary),0.10)",
               }}
@@ -118,7 +118,7 @@ const CustomCursor = () => {
 
           {/* CURSOR */}
           <div
-            className="fixed top-0 left-0 z-[9999] w-3 h-3 rounded-full pointer-events-none"
+            className="fixed top-0 left-0 z-9999 w-3 h-3 rounded-full pointer-events-none"
             style={{
               background: "rgb(var(--primary))",
               transform: `translate(${mouse.x}px, ${mouse.y}px) translate(-50%, -50%)`,

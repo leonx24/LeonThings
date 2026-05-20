@@ -1,282 +1,115 @@
-// src/components/ui/AnimatedBackground.jsx
+const particles = [
+  { left: "12%", top: "18%", size: 2, duration: 24, delay: 0 },
+  { left: "22%", top: "72%", size: 2, duration: 28, delay: 2 },
+  { left: "38%", top: "34%", size: 2, duration: 30, delay: 4 },
+  { left: "58%", top: "82%", size: 2, duration: 26, delay: 1 },
+  { left: "74%", top: "24%", size: 2, duration: 32, delay: 3 },
+  { left: "84%", top: "58%", size: 2, duration: 34, delay: 5 },
+];
 
-import { useEffect, useState } from "react";
-
-const AnimatedBackground = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const shapes = [
-    // BIG CIRCLES
-    {
-      type: "circle",
-      size: 320,
-      top: "10%",
-      left: "5%",
-      delay: "0s",
-      duration: "24s",
-      speed: 0.08,
-    },
-    {
-      type: "circle",
-      size: 180,
-      top: "70%",
-      left: "78%",
-      delay: "2s",
-      duration: "18s",
-      speed: 0.05,
-    },
-
-    // ROUNDED SQUARES
-    {
-      type: "square",
-      size: 340,
-      top: "15%",
-      left: "20%",
-      delay: "0s",
-      duration: "26s",
-      speed: 0.12,
-    },
-    {
-      type: "square",
-      size: 220,
-      top: "60%",
-      left: "65%",
-      delay: "3s",
-      duration: "20s",
-      speed: 0.09,
-    },
-    {
-      type: "square",
-      size: 120,
-      top: "40%",
-      left: "45%",
-      delay: "1s",
-      duration: "16s",
-      speed: 0.07,
-    },
-    {
-      type: "square",
-      size: 70,
-      top: "80%",
-      left: "15%",
-      delay: "4s",
-      duration: "14s",
-      speed: 0.04,
-    },
-
-    // RINGS
-    {
-      type: "ring",
-      size: 200,
-      top: "5%",
-      left: "60%",
-      delay: "1s",
-      duration: "30s",
-      speed: 0.06,
-    },
-    {
-      type: "ring",
-      size: 120,
-      top: "65%",
-      left: "25%",
-      delay: "2s",
-      duration: "24s",
-      speed: 0.05,
-    },
-
-    // DIAMONDS
-    {
-      type: "diamond",
-      size: 90,
-      top: "25%",
-      left: "80%",
-      delay: "2s",
-      duration: "20s",
-      speed: 0.1,
-    },
-    {
-      type: "diamond",
-      size: 50,
-      top: "75%",
-      left: "40%",
-      delay: "3s",
-      duration: "16s",
-      speed: 0.07,
-    },
-
-    // DOTS
-    {
-      type: "dot",
-      size: 8,
-      top: "20%",
-      left: "35%",
-      delay: "0s",
-      duration: "10s",
-      speed: 0.03,
-    },
-    {
-      type: "dot",
-      size: 5,
-      top: "50%",
-      left: "70%",
-      delay: "2s",
-      duration: "12s",
-      speed: 0.02,
-    },
-    {
-      type: "dot",
-      size: 6,
-      top: "85%",
-      left: "55%",
-      delay: "1s",
-      duration: "14s",
-      speed: 0.04,
-    },
-
-    // LINES
-    {
-      type: "line",
-      size: 120,
-      top: "30%",
-      left: "55%",
-      delay: "0s",
-      duration: "20s",
-      speed: 0.06,
-    },
-    {
-      type: "line",
-      size: 80,
-      top: "70%",
-      left: "25%",
-      delay: "2s",
-      duration: "18s",
-      speed: 0.05,
-    },
-  ];
-
+export default function AnimatedBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="fixed inset-0 -z-50 overflow-hidden bg-[#09090B]">
+      
+      {/* Base Ambient */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(circle at top, rgba(34,211,238,0.06), transparent 35%),
+            radial-gradient(circle at bottom right, rgba(34,211,238,0.04), transparent 40%)
+          `,
+        }}
+      />
 
-      {/* GRID */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      {/* Top Light */}
+      <div
+        className="
+          absolute
+          top-[-5%]
+          left-1/2
+          -translate-x-1/2
+          w-500px
+          h-220px
+          opacity-20
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
 
-      {shapes.map((shape, i) => (
-        <span
-          key={i}
-          className="absolute"
-          style={{
-            top: shape.top,
-            left: shape.left,
-            transform: `translateY(${scrollY * shape.speed}px)`,
-            animationName: "float",
-            animationTimingFunction: "ease-in-out",
-            animationIterationCount: "infinite",
-            animationDelay: shape.delay,
-            animationDuration: shape.duration,
-          }}
-        >
-          {/* CIRCLE */}
-          {shape.type === "circle" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: shape.size,
-                borderRadius: "9999px",
-                background:
-                  "radial-gradient(circle, rgba(var(--primary),0.06) 0%, transparent 70%)",
-                border: "1px solid rgba(var(--primary),0.05)",
-                filter: "blur(2px)",
-              }}
-            />
-          )}
+      {/* Left Glow */}
+      <div
+        className="
+          absolute
+          top-[10%]
+          left-[-5%]
+          w-320px
+          h-320px
+          rounded-full
+          bg-cyan-500/10
+          blur-[70px]
+          animate-floatSlow
+        "
+      />
 
-          {/* ROUNDED SQUARE */}
-          {shape.type === "square" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: shape.size,
-                borderRadius: "32px",
-                background:
-                  "linear-gradient(135deg, rgba(var(--primary),0.05), rgba(var(--primary),0.01))",
-                border: "1px solid rgba(var(--primary),0.08)",
-                backdropFilter: "blur(10px)",
-                boxShadow: "0 0 40px rgba(var(--primary),0.03)",
-                transform: `rotate(${i * 8}deg)`,
-              }}
-            />
-          )}
+      {/* Right Glow */}
+      <div
+        className="
+          absolute
+          bottom-[-5%]
+          right-[-5%]
+          w-360px
+          h-360px
+          rounded-full
+          bg-cyan-400/10
+          blur-[80px]
+          animate-floatSlowReverse
+        "
+      />
 
-          {/* RING */}
-          {shape.type === "ring" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: shape.size,
-                borderRadius: "9999px",
-                border: "1px solid rgba(var(--primary),0.08)",
-              }}
-            />
-          )}
+      {/* Floating Particles */}
+      <div className="absolute inset-0">
+        {particles.map((particle, index) => (
+          <span
+            key={index}
+            className="absolute rounded-full bg-white/10"
+            style={{
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              left: particle.left,
+              top: particle.top,
+              animation: `
+                floatParticle ${particle.duration}s ease-in-out infinite
+              `,
+              animationDelay: `${particle.delay}s`,
+            }}
+          />
+        ))}
+      </div>
 
-          {/* DIAMOND */}
-          {shape.type === "diamond" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: shape.size,
-                border: "1px solid rgba(var(--primary),0.1)",
-                transform: "rotate(45deg)",
-              }}
-            />
-          )}
+      {/* Subtle Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "90px 90px",
+        }}
+      />
 
-          {/* DOT */}
-          {shape.type === "dot" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: shape.size,
-                borderRadius: "9999px",
-                background: "rgba(var(--primary),0.35)",
-                boxShadow: "0 0 12px rgba(var(--primary),0.4)",
-              }}
-            />
-          )}
-
-          {/* LINE */}
-          {shape.type === "line" && (
-            <span
-              style={{
-                display: "block",
-                width: shape.size,
-                height: "1px",
-                background:
-                  "linear-gradient(90deg, transparent, rgba(var(--primary),0.2), transparent)",
-              }}
-            />
-          )}
-        </span>
-      ))}
+      {/* Vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at center, transparent 0%, rgba(9,9,11,0.5) 75%, #09090B 100%)",
+        }}
+      />
     </div>
   );
-};
-
-export default AnimatedBackground;
+}

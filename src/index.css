@@ -1,63 +1,79 @@
-  @import "tailwindcss";  
+@import "tailwindcss";
 
 :root {
-  --primary: 251, 191, 36;
+  --primary: 34, 211, 238;
 }
+
+/* GLOBAL */
 html {
   scroll-behavior: smooth;
 }
 
+html,
+body,
+#root {
+  overflow-x: hidden;
+  background: #09090B;
+}
+
+/* BODY */
 body {
-  background: black;
   color: white;
-  overflow-x: hidden;
+  background: #09090B;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-rendering: optimizeLegibility;
 }
 
-* {
-  cursor: none;
-}
-html {
-  scroll-behavior: smooth;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px) translateX(0px);
-  }
-
-  50% {
-    transform: translateY(-30px) translateX(20px);
-  }
-
-  100% {
-    transform: translateY(0px) translateX(0px);
-  }
-}
-
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  overflow-x: hidden;
-}
-
+/* CUSTOM CURSOR */
 @media (min-width: 768px) {
   * {
     cursor: none;
   }
 }
 
+/* TEXT SELECTION */
+::selection {
+  background: rgba(34, 211, 238, 0.3);
+  color: white;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* RIPPLE EFFECT */
 .ripple {
   position: fixed;
+
   width: 20px;
   height: 20px;
+
   border: 2px solid rgba(var(--primary), 0.7);
   border-radius: 9999px;
+
   pointer-events: none;
+
   transform: translate(-50%, -50%);
+
   animation: rippleEffect 0.7s ease-out forwards;
+
   z-index: 9997;
 }
 
@@ -74,3 +90,53 @@ body {
     opacity: 0;
   }
 }
+
+/* FLOAT ANIMATIONS */
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+
+  50% {
+    transform: translate(40px, -30px);
+  }
+}
+
+@keyframes floatSlowReverse {
+  0%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+
+  50% {
+    transform: translate(-30px, 40px);
+  }
+}
+
+@keyframes floatParticle {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translateY(-20px);
+    opacity: 0.6;
+  }
+}
+
+/* ANIMATION CLASSES */
+.animate-floatSlow {
+  animation: floatSlow 18s ease-in-out infinite;
+}
+
+.animate-floatSlowReverse {
+  animation: floatSlowReverse 22s ease-in-out infinite;
+}
+
+.animate-floatParticle {
+  animation: floatParticle 20s ease-in-out infinite;
+}
+

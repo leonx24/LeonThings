@@ -3,9 +3,13 @@ import Footer from "../components/ui/Footer";
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="bg-black text-white min-h-screen font-sans">
+    <div className="relative min-h-screen bg-transparent text-white font-sans">
       <Navbar />
-      <main>{children}</main>
+
+      <main className="relative z-10">
+        {children}
+      </main>
+
       <Footer />
     </div>
   );

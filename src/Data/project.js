@@ -1,7 +1,6 @@
 // src/Data/project.js
 import LeonImage from "../assets/images/me.png";
 import RobloxImage from "../assets/images/roblox.png";
-import SeminarImage from "../assets/images/seminar.png";
 import TabImage from "../assets/images/customtab.png";
 import BotImage from "../assets/images/leonbot.png";
 export const personalInfo = {
@@ -86,7 +85,7 @@ export const projects = [
 
   image: BotImage,
 
-  github: "https://github.com/username/leonbot",
+  github: "https://github.com/affaririzkyf/discord-bot",
 
   demo: "https://leonbot-web.vercel.app",
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -7,37 +7,13 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
-const themes = [
-  {
-    name: "Amber",
-    value: "251, 191, 36",
-  },
-  {
-    name: "Cyan",
-    value: "34, 211, 238",
-  },
-  {
-    name: "Purple",
-    value: "168, 85, 247",
-  },
-  {
-    name: "Red",
-    value: "248, 113, 113",
-  },
-  {
-    name: "Emerald",
-    value: "52, 211, 153",
-  },
-];
-
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -51,182 +27,244 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
-  const changeTheme = (color) => {
-    document.documentElement.style.setProperty(
-      "--primary",
-      color
-    );
-  };
-
   return (
     <>
+      {/* NAVBAR */}
       <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-black/70 backdrop-blur-2xl"
-            : "bg-transparent"
-        }`}
+        className={`
+          fixed
+          top-4
+          left-1/2
+          -translate-x-1/2
+          z-50
+          w-[95%]
+          max-w-6xl
+          transition-all
+          duration-500
+          ${
+            scrolled
+              ? `
+                border border-white/10
+                bg-black/30
+                backdrop-blur-2xl
+                shadow-[0_0_50px_rgba(34,211,238,0.05)]
+              `
+              : `
+                bg-transparent
+              `
+          }
+          rounded-2xl
+        `}
       >
-        <div className="max-w-6xl mx-auto px-5 md:px-6 py-4 flex items-center justify-between">
+        <div
+          className="
+            relative
+            flex
+            items-center
+            justify-between
+            px-6
+            py-4
+          "
+        >
+          {/* SUBTLE OVERLAY */}
+          <div
+            className="
+              pointer-events-none
+              absolute
+              inset-0
+              rounded-2xl
+              bg-white/2
+            "
+          />
 
           {/* LOGO */}
           <a
             href="#"
-            className="text-lg md:text-xl font-bold tracking-[0.25em] uppercase text-[rgb(var(--primary))]"
+            className="
+              relative
+              z-10
+              text-lg
+              font-semibold
+              tracking-wide
+              text-white
+            "
           >
-            Affa<span className="text-white">.</span>
+            LEON
           </a>
 
-          {/* DESKTOP */}
-          <div className="hidden md:flex items-center gap-8">
-
-            <ul className="flex items-center gap-8">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm tracking-[0.25em] uppercase text-gray-300 hover:text-[rgb(var(--primary))] transition-all duration-300 relative group"
-                  >
-                    {link.label}
-
-                    <span className="absolute -bottom-1 left-0 w-0 h-px bg-[rgb(var(--primary))] transition-all duration-300 group-hover:w-full" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            {/* DESKTOP THEMES */}
-            <div className="relative">
-
-              <button
-                onClick={() => setThemeOpen(!themeOpen)}
-                className="px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl text-xs tracking-[0.25em] uppercase hover:border-[rgb(var(--primary))] hover:text-[rgb(var(--primary))] transition-all duration-300"
+          {/* DESKTOP NAV */}
+          <div
+            className="
+              relative
+              z-10
+              hidden
+              items-center
+              gap-10
+              md:flex
+            "
+          >
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="
+                  text-sm
+                  text-zinc-400
+                  transition-colors
+                  duration-500
+                  hover:text-white
+                "
               >
-                Themes
-              </button>
-
-              <div
-                className={`absolute top-14 right-0 transition-all duration-300 ${
-                  themeOpen
-                    ? "opacity-100 visible translate-y-0"
-                    : "opacity-0 invisible -translate-y-2"
-                }`}
-              >
-                <div className="flex items-center gap-3 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-4">
-
-                  {themes.map((theme) => (
-                    <button
-                      key={theme.name}
-                      onClick={() => changeTheme(theme.value)}
-                      className="w-6 h-6 rounded-full border border-white/20 hover:scale-125 transition-transform duration-300"
-                      style={{
-                        background: `rgb(${theme.value})`,
-                      }}
-                    />
-                  ))}
-
-                </div>
-              </div>
-
-            </div>
-
+                {link.label}
+              </a>
+            ))}
           </div>
+
+          {/* CTA */}
+              <a
+        href="#contact"
+        className="
+          rounded-full
+          border
+          border-white/10
+          bg-white
+          px-5
+          py-2
+          text-sm
+          font-medium
+          text-black
+          transition-all
+          duration-500
+          hover:scale-[1.03]
+          hover:bg-zinc-200
+        "
+      >
+        Let's Talk
+      </a>
 
           {/* MOBILE BUTTON */}
           <button
-            className="md:hidden relative z-[60] flex flex-col gap-1.5 p-2"
             onClick={() => setMenuOpen(!menuOpen)}
+            className="
+              relative
+              z-10
+              flex
+              flex-col
+              gap-1.5
+              md:hidden
+            "
             aria-label="Toggle Menu"
           >
             <span
-              className={`block w-6 h-px bg-[rgb(var(--primary))] transition-all duration-300 ${
-                menuOpen ? "rotate-45 translate-y-2" : ""
-              }`}
+              className={`
+                h-px
+                w-6
+                bg-white
+                transition-all
+                duration-500
+                ${
+                  menuOpen
+                    ? "translate-y-7px rotate-45"
+                    : ""
+                }
+              `}
             />
 
             <span
-              className={`block w-6 h-px bg-[rgb(var(--primary))] transition-all duration-300 ${
-                menuOpen ? "opacity-0" : ""
-              }`}
+              className={`
+                h-px
+                w-6
+                bg-white
+                transition-all
+                duration-500
+                ${
+                  menuOpen
+                    ? "opacity-0"
+                    : ""
+                }
+              `}
             />
 
             <span
-              className={`block w-6 h-px bg-[rgb(var(--primary))] transition-all duration-300 ${
-                menuOpen ? "-rotate-45 -translate-y-2" : ""
-              }`}
+              className={`
+                h-px
+                w-6
+                bg-white
+                transition-all
+                duration-500
+                ${
+                  menuOpen
+                    ? "-translate-y-7px -rotate-45"
+                    : ""
+                }
+              `}
             />
           </button>
-
         </div>
       </nav>
 
       {/* MOBILE MENU */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ${
-          menuOpen
-            ? "opacity-100 visible"
-            : "opacity-0 invisible"
-        }`}
+        className={`
+          fixed
+          top-24
+          right-4
+          z-40
+          w-300px
+          transition-all
+          duration-500
+          md:hidden
+          ${
+            menuOpen
+              ? "visible opacity-100 translate-y-0"
+              : "invisible opacity-0 -translate-y-4"
+          }
+        `}
       >
-
-        {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl" />
-
-        {/* CONTENT */}
-        <div className="relative h-full flex flex-col items-center justify-center px-8">
-
-          {/* NAV LINKS */}
-          <ul className="flex flex-col items-center gap-10">
-
-            {navLinks.map((link) => (
-              <li key={link.label}>
+        <div
+          className="
+            overflow-hidden
+            rounded-3xl
+            border
+            border-white/10
+            bg-black/60
+            backdrop-blur-2xl
+            shadow-[0_0_40px_rgba(34,211,238,0.05)]
+          "
+        >
+          <div
+            className="
+              flex
+              flex-col
+              p-6
+            "
+          >
+            {/* LINKS */}
+            <div
+              className="
+                flex
+                flex-col
+                gap-6
+              "
+            >
+              {navLinks.map((link) => (
                 <a
+                  key={link.label}
                   href={link.href}
                   onClick={handleNavClick}
-                  className="text-sm tracking-[0.35em] uppercase text-gray-300 hover:text-[rgb(var(--primary))] transition-all duration-300"
+                  className="
+                    text-sm
+                    text-zinc-300
+                    transition-colors
+                    duration-500
+                    hover:text-white
+                  "
                 >
                   {link.label}
                 </a>
-              </li>
-            ))}
-
-          </ul>
-
-          {/* MOBILE THEMES */}
-          <div className="flex flex-col items-center gap-5 mt-16">
-
-            <p className="text-[10px] tracking-[0.4em] uppercase text-gray-500">
-              Themes
-            </p>
-
-            <div className="flex items-center gap-5 bg-white/5 border border-white/10 backdrop-blur-xl rounded-full px-6 py-4">
-
-              {themes.map((theme) => (
-                <button
-                  key={theme.name}
-                  onClick={() => changeTheme(theme.value)}
-                  className="relative group"
-                >
-                  <div
-                    className="w-8 h-8 rounded-full border border-white/20 transition-all duration-300 active:scale-90"
-                    style={{
-                      background: `rgb(${theme.value})`,
-                    }}
-                  />
-
-                  <div
-                    className="absolute inset-0 rounded-full blur-md opacity-40"
-                    style={{
-                      background: `rgb(${theme.value})`,
-                    }}
-                  />
-                </button>
               ))}
-
             </div>
-
           </div>
-
         </div>
       </div>
     </>

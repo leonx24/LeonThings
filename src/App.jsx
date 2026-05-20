@@ -13,7 +13,6 @@ const App = () => {
       className="
         relative
         min-h-screen
-        overflow-x-hidden
         bg-[#09090B]
         text-white
       "

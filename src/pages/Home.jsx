@@ -13,7 +13,6 @@ const Home = () => {
       className="
         relative
         z-10
-        overflow-x-hidden
       "
     >
       {/* HERO */}

@@ -63,6 +63,8 @@
   z-index: 9997;
 }
 
+
+
 @keyframes rippleEffect {
   0% {
     width: 20px;

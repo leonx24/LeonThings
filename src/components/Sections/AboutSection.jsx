@@ -12,10 +12,10 @@ const AboutSection = () => {
         animate-on-scroll
         relative
         overflow-hidden
-        py-32
+        py-24
       "
     >
-      {/* AMBIENT LIGHT */}
+      {/* SUBTLE AMBIENT */}
       <div
         className="
           pointer-events-none
@@ -25,8 +25,8 @@ const AboutSection = () => {
           h-450px
           w-450px
           rounded-full
-          bg-cyan-500/5
-          blur-[120px]
+          bg-cyan-500/4
+          blur-[90px]
         "
       />
 
@@ -36,36 +36,34 @@ const AboutSection = () => {
           z-10
           mx-auto
           grid
-          max-w-7xl
+          max-w-6xl
           items-center
-          gap-24
+          gap-14
           px-6
           lg:grid-cols-2
         "
       >
-
         {/* LEFT */}
         <div
           className="
             relative
             mx-auto
             w-full
-            max-w-md
+            max-w-sm
           "
         >
-
           {/* GLOW */}
           <div
             className="
               absolute
               inset-0
               rounded-4xl
-              bg-cyan-500/8
-              blur-[80px]
+              bg-cyan-500/6
+              blur-[60px]
             "
           />
 
-          {/* IMAGE CARD */}
+          {/* IMAGE */}
           <div
             className="
               relative
@@ -74,7 +72,7 @@ const AboutSection = () => {
               border
               border-white/10
               bg-white/3
-              backdrop-blur-xl
+              backdrop-blur-md
             "
           >
             {personalInfo.photo ? (
@@ -82,20 +80,20 @@ const AboutSection = () => {
                 src={personalInfo.photo}
                 alt={personalInfo.name}
                 className="
-                  h-600px
+                  h-480px
                   w-full
                   object-cover
-                  brightness-90
+                  brightness-95
                   transition-transform
                   duration-700
-                  hover:scale-105
+                  hover:scale-[1.02]
                 "
               />
             ) : (
               <div
                 className="
                   flex
-                  h-600px
+                  h-480px
                   items-center
                   justify-center
                   bg-white/3
@@ -103,7 +101,7 @@ const AboutSection = () => {
               >
                 <span
                   className="
-                    text-8xl
+                    text-7xl
                     font-semibold
                     text-white/10
                   "
@@ -119,25 +117,23 @@ const AboutSection = () => {
                 absolute
                 inset-0
                 bg-linear-to-t
-                from-black/50
+                from-black/40
                 via-transparent
                 to-transparent
               "
             />
           </div>
-
         </div>
 
         {/* RIGHT */}
-        <div>
-
+        <div className="max-w-2xl">
           {/* LABEL */}
           <p
             className="
-              mb-5
-              text-sm
+              mb-4
+              text-xs
               uppercase
-              tracking-[0.2em]
+              tracking-[0.25em]
               text-cyan-400
             "
           >
@@ -147,48 +143,39 @@ const AboutSection = () => {
           {/* TITLE */}
           <h2
             className="
-              text-4xl
-              font-bold
+              text-3xl
+              font-semibold
               leading-tight
+              tracking-tight
               text-white
-              md:text-5xl
+              md:text-4xl
             "
           >
-            Crafting modern digital experiences with elegance and precision.
+            Designing clean and modern digital experiences.
           </h2>
 
-          {/* DESCRIPTION */}
-          <p
+            {/* DESCRIPTION */}
+            <p
             className="
-              mt-8
-              text-lg
-              leading-8
-              text-zinc-400
+                mt-6
+                text-base
+                leading-7
+                text-zinc-400
+                md:text-lg
             "
-          >
-            {personalInfo.bio}
-          </p>
-
-          <p
-            className="
-              mt-6
-              text-lg
-              leading-8
-              text-zinc-400
-            "
-          >
-            I focus on building interfaces that feel
-            minimal, premium, and intuitive while keeping
-            performance and user experience at the center
-            of every project.
-          </p>
+            >
+            {personalInfo.bio} I enjoy building interfaces that feel
+            elegant, minimal, and intuitive while maintaining strong
+            performance and a smooth user experience across every
+            interaction.
+            </p>
 
           {/* INFO GRID */}
           <div
             className="
-              mt-12
+              mt-8
               grid
-              gap-5
+              gap-4
               sm:grid-cols-2
             "
           >
@@ -220,15 +207,15 @@ const AboutSection = () => {
                   border
                   border-white/10
                   bg-white/3
-                  p-5
-                  backdrop-blur-xl
+                  p-4
+                  backdrop-blur-md
                 "
               >
                 <p
                   className="
-                    text-xs
+                    text-[11px]
                     uppercase
-                    tracking-[0.15em]
+                    tracking-[0.2em]
                     text-zinc-500
                   "
                 >
@@ -237,8 +224,10 @@ const AboutSection = () => {
 
                 <p
                   className="
-                    mt-3
+                    mt-2
+                    text-sm
                     text-white
+                    md:text-base
                   "
                 >
                   {item.value}
@@ -253,8 +242,9 @@ const AboutSection = () => {
               href={personalInfo.cv}
               download
               className="
-                mt-10
+                mt-8
                 inline-flex
+                items-center
                 rounded-full
                 bg-white
                 px-6
@@ -270,9 +260,7 @@ const AboutSection = () => {
               Download CV
             </a>
           )}
-
         </div>
-
       </div>
     </section>
   );

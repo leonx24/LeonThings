@@ -1,143 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Geist:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap");
+
 @import "tailwindcss";
 
-:root {
-  --primary: 34, 211, 238;
+:root{
+  --color-bg: #0a0a0a;
+  --color-bg2: #0f0f0f;
+  --color-bg3: #161616;
+
+  --font-serif: "Instrument Serif", serif;
+  --font-sans: "Geist", sans-serif;
+  --font-mono: "DM Mono", monospace;
 }
 
-/* GLOBAL */
 html {
   scroll-behavior: smooth;
 }
 
-html,
-body,
-#root {
-  overflow-x: clip;
-  background: #09090B;
-}
-
-/* BODY */
 body {
-  color: white;
-  background: #09090B;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  text-rendering: optimizeLegibility;
+  background: #0a0a0a;
+  color: #efefef;
+  overflow-x: hidden;
 }
-
-/* CUSTOM CURSOR */
-@media (min-width: 768px) {
-  * {
-    cursor: none;
-  }
-}
-
-/* TEXT SELECTION */
-::selection {
-  background: rgba(34, 211, 238, 0.3);
-  color: white;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-
-::-webkit-scrollbar-track {
-  background: #09090B;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* RIPPLE EFFECT */
-.ripple {
-  position: fixed;
-
-  width: 20px;
-  height: 20px;
-
-  border: 2px solid rgba(var(--primary), 0.7);
-  border-radius: 9999px;
-
-  pointer-events: none;
-
-  transform: translate(-50%, -50%);
-
-  animation: rippleEffect 0.7s ease-out forwards;
-
-  z-index: 9997;
-}
-
-@keyframes rippleEffect {
-  0% {
-    width: 20px;
-    height: 20px;
-    opacity: 1;
-  }
-
-  100% {
-    width: 120px;
-    height: 120px;
-    opacity: 0;
-  }
-}
-
-/* FLOAT ANIMATIONS */
-@keyframes floatSlow {
-  0%,
-  100% {
-    transform: translate(0px, 0px);
-  }
-
-  50% {
-    transform: translate(40px, -30px);
-  }
-}
-
-@keyframes floatSlowReverse {
-  0%,
-  100% {
-    transform: translate(0px, 0px);
-  }
-
-  50% {
-    transform: translate(-30px, 40px);
-  }
-}
-
-@keyframes floatParticle {
-  0%,
-  100% {
-    transform: translateY(0px);
-    opacity: 0.2;
-  }
-
-  50% {
-    transform: translateY(-20px);
-    opacity: 0.6;
-  }
-}
-
-/* ANIMATION CLASSES */
-.animate-floatSlow {
-  animation: floatSlow 18s ease-in-out infinite;
-}
-
-.animate-floatSlowReverse {
-  animation: floatSlowReverse 22s ease-in-out infinite;
-}
-
-.animate-floatParticle {
-  animation: floatParticle 20s ease-in-out infinite;
-}
-

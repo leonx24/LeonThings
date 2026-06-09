@@ -14,7 +14,11 @@ import CustomCursor from "../components/CustomCursor"
 
 import Footer from "../components/footer"
 
+import useSmoothScroll from "../hooks/useSmoothScroll"
+
 export default function Home() {
+  useSmoothScroll()
+
   return (
     <>
       <CustomCursor />

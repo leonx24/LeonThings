@@ -5,6 +5,7 @@ import Navbar from "../components/navbar"
 import GridLines from "../components/gridLines"
 import Noise from "../components/noise"
 import LazyImage from "../components/LazyImage"
+import CustomCursor from "../components/CustomCursor"
 
 export default function ProjectDetail() {
   const { slug } = useParams()
@@ -42,6 +43,7 @@ export default function ProjectDetail() {
 
   return (
     <main className="bg-black text-white min-h-screen">
+      <CustomCursor />
       <GridLines />
       <Noise />
       <Navbar />

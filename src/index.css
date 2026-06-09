@@ -20,4 +20,13 @@ body {
   background: #0a0a0a;
   color: #efefef;
   overflow-x: hidden;
+  cursor: none;
+}
+
+/* Hide default cursor on interactive elements */
+a,
+button,
+[role="button"],
+.cursor-hover {
+  cursor: none;
 }

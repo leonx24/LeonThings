@@ -10,12 +10,14 @@ import Services from "../components/services"
 import Quote from "../components/quote"
 import Contact from "../components/contact"
 import Noise from "../components/noise"
+import CustomCursor from "../components/CustomCursor"
 
 import Footer from "../components/footer"
 
 export default function Home() {
   return (
     <>
+      <CustomCursor />
       <Noise />
       <GridLines />
       <Navbar />

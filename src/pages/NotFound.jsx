@@ -2,10 +2,12 @@ import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import GridLines from "../components/gridLines"
 import Noise from "../components/noise"
+import CustomCursor from "../components/CustomCursor"
 
 export default function NotFound() {
   return (
     <main className="bg-black text-white min-h-screen relative overflow-hidden">
+      <CustomCursor />
       <GridLines />
       <Noise />
 

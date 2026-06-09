@@ -71,7 +71,7 @@ export default function NotFound() {
           {/* Description */}
           <motion.p
             className="
-              max-w-[420px]
+              max-w-105
               mx-auto
               text-[13px]
               leading-[1.85]

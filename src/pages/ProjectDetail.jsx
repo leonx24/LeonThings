@@ -4,6 +4,7 @@ import { projects } from "../data/projects"
 import Navbar from "../components/navbar"
 import GridLines from "../components/gridLines"
 import Noise from "../components/noise"
+import LazyImage from "../components/LazyImage"
 
 export default function ProjectDetail() {
   const { slug } = useParams()
@@ -150,14 +151,13 @@ export default function ProjectDetail() {
           </p>
         </div>
 
-        <img
+        <LazyImage
           src={project.gallery[0]}
           alt={project.title}
+          priority={true}
           className="
             mt-20
-
             w-full
-
             border
             border-white/10
           "
@@ -295,13 +295,12 @@ export default function ProjectDetail() {
                 }
               `}
             >
-              <img
+              <LazyImage
                 src={image}
                 alt={`${project.title}-${index}`}
                 className="
                   w-full
                   lg:w-[85%]
-
                   border
                   border-white/10
                 "

@@ -1,6 +1,8 @@
-import Leonx from "../assets/images/leonx.png"
-import Leonx2 from "../assets/images/leonx2.png"
-import Leonx3 from "../assets/images/leonx3.png"
+import Leonx from "../assets/images/leonx.webp"
+import Leonx2 from "../assets/images/leonx2.webp"
+import Leonx3 from "../assets/images/leonx3.webp"
+
+import dcbot from "../assets/images/dcbot.webp"
 
 
 export const projects = [
@@ -35,6 +37,36 @@ export const projects = [
       Leonx,
       Leonx2,
       Leonx3
+    ]
+  },
+    {
+    number: "02",
+
+    title: "Discord Bot",
+
+    slug: "discord-bot",
+
+    tags: [
+      "Python",
+      "Railway"
+    ],
+
+    year: "2026",
+
+    overview:
+      "A Discord bot built with Python and hosted on Railway, featuring a clean UI and modern execution experience.",
+
+    challenge:
+      "Build a powerful Discord bot while keeping the interface simple, responsive and easy to navigate.",
+
+    solution:
+      "Created a modular architecture with reusable components, optimized logic and a modern monochrome design system.",
+
+    result:
+      "Delivered a polished scripting experience with improved usability, performance and scalability.",
+
+    gallery: [
+      dcbot
     ]
   }
 ]

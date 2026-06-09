@@ -118,9 +118,10 @@ export default function Contact() {
               {[
                 {
                   label: "Email",
-                  value: "hello@leonthings.dev",
-                  href: "mailto:hello@leonthings.dev",
+                  value: "affavanleon@gmail.com",
+                  href: "mailto:affavanleon@gmail.com",
                 },
+
                 {
                   label: "Github",
                   value: "github.com/leonx24",
@@ -128,7 +129,7 @@ export default function Contact() {
                 },
                 {
                   label: "Discord",
-                  value: "leon.dev",
+                  value: "-",
                   href: "#",
                 },
               ].map((item) => (

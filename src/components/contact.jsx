@@ -24,14 +24,14 @@ export default function Contact() {
     try {
       // Replace with your EmailJS credentials
       await emailjs.send(
-        "YOUR_SERVICE_ID", // Get from EmailJS dashboard
-        "YOUR_TEMPLATE_ID", // Get from EmailJS dashboard
+        "service_ecwex65", // Get from EmailJS dashboard
+        "template_otfuenn", // Get from EmailJS dashboard
         {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
         },
-        "YOUR_PUBLIC_KEY" // Get from EmailJS dashboard
+        "RHsH6QtIq6dXMYYq6" // Get from EmailJS dashboard
       )
 
       setStatus("success")

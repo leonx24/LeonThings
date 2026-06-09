@@ -1,6 +1,53 @@
+import { useState } from "react"
 import Reveal from "./reveal"
+import emailjs from "@emailjs/browser"
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  })
+  const [status, setStatus] = useState("idle") // idle, sending, success, error
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setStatus("sending")
+
+    try {
+      // Replace with your EmailJS credentials
+      await emailjs.send(
+        "YOUR_SERVICE_ID", // Get from EmailJS dashboard
+        "YOUR_TEMPLATE_ID", // Get from EmailJS dashboard
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        "YOUR_PUBLIC_KEY" // Get from EmailJS dashboard
+      )
+
+      setStatus("success")
+      setFormData({ name: "", email: "", message: "" })
+
+      // Reset success message after 5s
+      setTimeout(() => setStatus("idle"), 5000)
+    } catch (error) {
+      console.error("EmailJS error:", error)
+      setStatus("error")
+
+      // Reset error message after 5s
+      setTimeout(() => setStatus("idle"), 5000)
+    }
+  }
+
   return (
     <section
       id="contact"
@@ -65,94 +112,264 @@ export default function Contact() {
                 Let's build it.
               </em>
             </h2>
+
+            {/* Contact Links */}
+            <div className="mt-16">
+              {[
+                {
+                  label: "Email",
+                  value: "hello@leonthings.dev",
+                  href: "mailto:hello@leonthings.dev",
+                },
+                {
+                  label: "Github",
+                  value: "github.com/leonx24",
+                  href: "https://github.com/leonx24",
+                },
+                {
+                  label: "Discord",
+                  value: "leon.dev",
+                  href: "#",
+                },
+              ].map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="
+                    group
+
+                    flex
+                    justify-between
+                    items-center
+
+                    py-5
+
+                    border-b
+                    border-white/[0.07]
+                  "
+                >
+                  <div>
+                    <div
+                      className="
+                        mb-1
+
+                        font-mono
+
+                        uppercase
+                        tracking-[0.28em]
+                        text-[10px]
+
+                        text-white/35
+                      "
+                    >
+                      {item.label}
+                    </div>
+
+                    <div
+                      className="
+                        font-serif
+                        text-xl
+                      "
+                    >
+                      {item.value}
+                    </div>
+                  </div>
+
+                  <span
+                    className="
+                      text-white/35
+
+                      transition-all
+                      duration-300
+
+                      group-hover:text-white
+                      group-hover:translate-x-1
+                      group-hover:-translate-y-1
+                    "
+                  >
+                    ↗
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         </Reveal>
 
         <Reveal delay={0.15}>
-          <div className="pt-3">
-            {[
-              {
-                label: "Email",
-                value: "hello@leonthings.dev",
-                href: "mailto:hello@leonthings.dev",
-              },
-              {
-                label: "Github",
-                value: "github.com/leon",
-                href: "https://github.com",
-              },
-              {
-                label: "Discord",
-                value: "leon.dev",
-                href: "#",
-              },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
+          <form onSubmit={handleSubmit} className="pt-3">
+            {/* Name Input */}
+            <div className="mb-8">
+              <label
+                htmlFor="name"
                 className="
-                  group
+                  block
+                  mb-3
 
-                  flex
-                  justify-between
-                  items-center
+                  font-mono
 
-                  py-5
+                  uppercase
+                  tracking-[0.28em]
+                  text-[10px]
 
-                  border-b
-                  border-white/[0.07]
+                  text-white/35
                 "
               >
-                <div>
-                  <div
-                    className="
-                      mb-1
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="
+                  w-full
 
-                      font-mono
+                  px-4
+                  py-4
 
-                      uppercase
-                      tracking-[0.28em]
-                      text-[10px]
+                  bg-transparent
 
-                      text-white/35
-                    "
-                  >
-                    {item.label}
-                  </div>
+                  border
+                  border-white/[0.07]
 
-                  <div
-                    className="
-                      font-serif
-                      text-xl
-                    "
-                  >
-                    {item.value}
-                  </div>
-                </div>
+                  text-white
 
-                <span
-                  className="
-                    text-white/35
+                  font-serif
+                  text-lg
 
-                    transition-all
-                    duration-300
+                  transition-all
+                  duration-300
 
-                    group-hover:text-white
-                    group-hover:translate-x-1
-                    group-hover:-translate-y-1
-                  "
-                >
-                  ↗
-                </span>
-              </a>
-            ))}
+                  focus:outline-none
+                  focus:border-white/30
 
+                  hover:border-white/20
+                "
+                placeholder="Your name"
+              />
+            </div>
+
+            {/* Email Input */}
+            <div className="mb-8">
+              <label
+                htmlFor="email"
+                className="
+                  block
+                  mb-3
+
+                  font-mono
+
+                  uppercase
+                  tracking-[0.28em]
+                  text-[10px]
+
+                  text-white/35
+                "
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="
+                  w-full
+
+                  px-4
+                  py-4
+
+                  bg-transparent
+
+                  border
+                  border-white/[0.07]
+
+                  text-white
+
+                  font-serif
+                  text-lg
+
+                  transition-all
+                  duration-300
+
+                  focus:outline-none
+                  focus:border-white/30
+
+                  hover:border-white/20
+                "
+                placeholder="your@email.com"
+              />
+            </div>
+
+            {/* Message Input */}
+            <div className="mb-8">
+              <label
+                htmlFor="message"
+                className="
+                  block
+                  mb-3
+
+                  font-mono
+
+                  uppercase
+                  tracking-[0.28em]
+                  text-[10px]
+
+                  text-white/35
+                "
+              >
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+                rows="6"
+                className="
+                  w-full
+
+                  px-4
+                  py-4
+
+                  bg-transparent
+
+                  border
+                  border-white/[0.07]
+
+                  text-white
+
+                  font-serif
+                  text-lg
+
+                  transition-all
+                  duration-300
+
+                  focus:outline-none
+                  focus:border-white/30
+
+                  hover:border-white/20
+
+                  resize-none
+                "
+                placeholder="Tell me about your project..."
+              />
+            </div>
+
+            {/* Submit Button */}
             <button
+              type="submit"
+              disabled={status === "sending"}
               className="
-                mt-10
+                w-full
 
                 px-9
-                py-4
+                py-5
 
                 border
                 border-white/13
@@ -168,14 +385,54 @@ export default function Contact() {
                 transition-all
                 duration-300
 
-                hover:bg-[#161616]
-                hover:text-white
+                hover:bg-white
+                hover:text-black
                 hover:border-white
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
               "
             >
-              Start A Conversation
+              {status === "sending"
+                ? "Sending..."
+                : status === "success"
+                ? "Message Sent ✓"
+                : status === "error"
+                ? "Error - Try Again"
+                : "Send Message"}
             </button>
-          </div>
+
+            {/* Status Messages */}
+            {status === "success" && (
+              <p
+                className="
+                  mt-4
+
+                  text-center
+                  text-[12px]
+
+                  text-green-500/70
+                "
+              >
+                Thanks! I'll get back to you soon.
+              </p>
+            )}
+
+            {status === "error" && (
+              <p
+                className="
+                  mt-4
+
+                  text-center
+                  text-[12px]
+
+                  text-red-500/70
+                "
+              >
+                Something went wrong. Please try again or email directly.
+              </p>
+            )}
+          </form>
         </Reveal>
       </div>
     </section>

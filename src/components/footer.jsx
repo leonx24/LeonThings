@@ -9,49 +9,57 @@ export default function Footer() {
 
         border-t
         border-white/[0.07]
-
-        flex
-        flex-col
-        gap-4
-
-        md:flex-row
-        md:items-center
-        md:justify-between
       "
     >
-      <span
+      <div
         className="
-          font-mono
+          max-w-5xl
+          mx-auto
+          w-full
 
-          uppercase
-          tracking-[0.18em]
-          text-[10px]
+          flex
+          flex-col
+          gap-4
 
-          text-white/35
+          md:flex-row
+          md:items-center
+          md:justify-between
         "
       >
-        © 2026 LeonThings
-      </span>
+        <span
+          className="
+            font-mono
 
-      <a
-        href="#hero"
-        className="
-          font-mono
+            uppercase
+            tracking-[0.18em]
+            text-[10px]
 
-          uppercase
-          tracking-[0.18em]
-          text-[10px]
+            text-white/35
+          "
+        >
+          © 2026 LeonThings
+        </span>
 
-          text-white/35
+        <a
+          href="#hero"
+          className="
+            font-mono
 
-          transition-colors
-          duration-300
+            uppercase
+            tracking-[0.18em]
+            text-[10px]
 
-          hover:text-white
-        "
-      >
-        Back To Top ↑
-      </a>
+            text-white/35
+
+            transition-colors
+            duration-300
+
+            hover:text-white
+          "
+        >
+          Back To Top ↑
+        </a>
+      </div>
     </footer>
   )
 }

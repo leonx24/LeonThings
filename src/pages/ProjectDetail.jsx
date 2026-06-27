@@ -57,116 +57,119 @@ export default function ProjectDetail() {
           px-8
           lg:px-16
 
-          pt-40
-          pb-24
+          pt-36
+          pb-20
         "
       >
-        <Link
-          to="/"
-          className="
-            inline-block
-
-            font-mono
-            text-[11px]
-            uppercase
-            tracking-[0.2em]
-
-            text-white/35
-            hover:text-white
-
-            transition-colors
-          "
-        >
-          ← Back
-        </Link>
-
-        <div className="mt-12">
-          <span
+        <div className="max-w-5xl mx-auto">
+          <Link
+            to="/"
             className="
+              inline-block
+
               font-mono
-              text-[11px]
+              text-[10px]
               uppercase
-              tracking-[0.2em]
+              tracking-[0.25em]
 
               text-white/35
+              hover:text-white
+
+              transition-colors
             "
           >
-            Project
-          </span>
+            ← Back to Home
+          </Link>
 
-          <h1
-            className="
-              mt-6
+          <div className="mt-12">
+            <span
+              className="
+                font-mono
+                text-[10px]
+                uppercase
+                tracking-[0.25em]
 
-              font-serif
+                text-white/35
+              "
+            >
+              Project Case Study
+            </span>
 
-              text-[clamp(60px,8vw,140px)]
-              leading-[0.92]
-            "
-          >
-            {project.title}
-          </h1>
+            <h1
+              className="
+                mt-5
 
-          <div
-            className="
-              mt-8
+                font-serif
 
-              flex
-              flex-wrap
-              gap-4
-            "
-          >
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="
-                  border
-                  border-white/10
+                text-[clamp(44px,6vw,96px)]
+                leading-[1.05]
+                tracking-[-0.01em]
+              "
+            >
+              {project.title}
+            </h1>
 
-                  px-3
-                  py-1
+            <div
+              className="
+                mt-6
 
-                  font-mono
-                  text-[10px]
-                  uppercase
-                  tracking-[0.18em]
-                "
-              >
-                {tag}
-              </span>
-            ))}
+                flex
+                flex-wrap
+                gap-2.5
+              "
+            >
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="
+                    border
+                    border-white/10
+
+                    px-2.5
+                    py-1
+
+                    font-mono
+                    text-[9px]
+                    uppercase
+                    tracking-[0.15em]
+                    text-white/45
+                  "
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <p
+              className="
+                mt-8
+
+                max-w-2xl
+
+                text-[15px]
+                leading-[1.8]
+
+                text-white/50
+                font-light
+              "
+            >
+              {project.overview}
+            </p>
           </div>
 
-          <p
-            className="
-              mt-10
-
-              max-w-175
-
-              text-lg
-              leading-relaxed
-
-              text-white/60
-            "
-          >
-            {project.overview}
-          </p>
+          {/* Primary image visual container */}
+          <div className="mt-16 border border-white/[0.08] bg-white/[0.02] overflow-hidden aspect-[16/9] w-full">
+            <LazyImage
+              src={project.gallery[0]}
+              alt={project.title}
+              priority={true}
+              className="w-full h-full object-cover scale-[1.01]"
+            />
+          </div>
         </div>
-
-        <LazyImage
-          src={project.gallery[0]}
-          alt={project.title}
-          priority={true}
-          className="
-            mt-20
-            w-full
-            border
-            border-white/10
-          "
-        />
       </section>
 
-      {/* CONTENT */}
+      {/* CONTENT (Modular panels) */}
       <section
         className="
           relative
@@ -175,142 +178,76 @@ export default function ProjectDetail() {
           px-8
           lg:px-16
 
-          py-24
+          py-20
 
           border-t
           border-white/[0.07]
         "
       >
-        <div
-          className="
-            grid
-            lg:grid-cols-3
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Challenge */}
+            <div className="p-6 border border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.02] transition-colors duration-300 flex flex-col justify-start">
+              <span className="font-mono uppercase tracking-[0.25em] text-[9px] text-white/35 block mb-4">
+                Challenge
+              </span>
+              <p className="font-sans text-[12px] leading-[1.8] text-white/60 font-light">
+                {project.challenge}
+              </p>
+            </div>
 
-            gap-16
-          "
-        >
-          <div>
-            <span
-              className="
-                font-mono
-                uppercase
+            {/* Card 2: Solution */}
+            <div className="p-6 border border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.02] transition-colors duration-300 flex flex-col justify-start">
+              <span className="font-mono uppercase tracking-[0.25em] text-[9px] text-white/35 block mb-4">
+                Solution
+              </span>
+              <p className="font-sans text-[12px] leading-[1.8] text-white/60 font-light">
+                {project.solution}
+              </p>
+            </div>
 
-                tracking-[0.3em]
-                text-[10px]
-
-                text-white/35
-              "
-            >
-              Challenge
-            </span>
-
-            <p
-              className="
-                mt-4
-
-                leading-relaxed
-                text-white/70
-              "
-            >
-              {project.challenge}
-            </p>
-          </div>
-
-          <div>
-            <span
-              className="
-                font-mono
-                uppercase
-
-                tracking-[0.3em]
-                text-[10px]
-
-                text-white/35
-              "
-            >
-              Solution
-            </span>
-
-            <p
-              className="
-                mt-4
-
-                leading-relaxed
-                text-white/70
-              "
-            >
-              {project.solution}
-            </p>
-          </div>
-
-          <div>
-            <span
-              className="
-                font-mono
-                uppercase
-
-                tracking-[0.3em]
-                text-[10px]
-
-                text-white/35
-              "
-            >
-              Result
-            </span>
-
-            <p
-              className="
-                mt-4
-
-                leading-relaxed
-                text-white/70
-              "
-            >
-              {project.result}
-            </p>
+            {/* Card 3: Result */}
+            <div className="p-6 border border-white/[0.05] bg-white/[0.01] hover:bg-white/[0.02] transition-colors duration-300 flex flex-col justify-start">
+              <span className="font-mono uppercase tracking-[0.25em] text-[9px] text-white/35 block mb-4">
+                Result
+              </span>
+              <p className="font-sans text-[12px] leading-[1.8] text-white/60 font-light">
+                {project.result}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* GALLERY */}
-      <section
-        className="
-          relative
-          z-10
+      {project.gallery.length > 1 && (
+        <section
+          className="
+            relative
+            z-10
 
-          px-8
-          lg:px-16
+            px-8
+            lg:px-16
 
-          py-24
-        "
-      >
-        <div className="space-y-24">
-          {project.gallery.map((image, index) => (
-            <div
-              key={index}
-              className={`
-                flex
-                ${
-                  index % 2 === 0
-                    ? "justify-start"
-                    : "justify-end"
-                }
-              `}
-            >
-              <LazyImage
-                src={image}
-                alt={`${project.title}-${index}`}
-                className="
-                  w-full
-                  lg:w-[85%]
-                  border
-                  border-white/10
-                "
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+            py-12
+          "
+        >
+          <div className="max-w-4xl mx-auto space-y-12">
+            {project.gallery.slice(1).map((image, index) => (
+              <div
+                key={index}
+                className="border border-white/[0.08] bg-white/[0.02] overflow-hidden w-full"
+              >
+                <LazyImage
+                  src={image}
+                  alt={`${project.title}-gallery-${index}`}
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* NEXT PROJECT */}
       {projects.length > 1 && (
@@ -322,72 +259,84 @@ export default function ProjectDetail() {
             px-8
             lg:px-16
 
-            py-24
+            py-20
 
             border-t
             border-white/[0.07]
           "
         >
-          <Link
-            to={`/project/${nextProject.slug}`}
-            className="
-              group
-              block
-            "
-          >
-            <span
+          <div className="max-w-5xl mx-auto">
+            <Link
+              to={`/project/${nextProject.slug}`}
               className="
-                font-mono
-                uppercase
-
-                tracking-[0.3em]
-                text-[10px]
-
-                text-white/35
+                group
+                block
+                p-8
+                border
+                border-white/[0.05]
+                bg-white/[0.01]
+                hover:bg-white/[0.03]
+                hover:border-white/10
+                transition-all
+                duration-300
               "
             >
-              Next Project
-            </span>
-
-            <div
-              className="
-                mt-8
-
-                flex
-                items-center
-                justify-between
-              "
-            >
-              <h2
-                className="
-                  font-serif
-
-                  text-[clamp(34px,5vw,80px)]
-
-                  transition-transform
-                  duration-300
-
-                  group-hover:translate-x-2
-                "
-              >
-                {nextProject.title}
-              </h2>
-
               <span
                 className="
-                  text-3xl
-
-                  transition-all
-                  duration-300
-
-                  group-hover:translate-x-2
-                  group-hover:-translate-y-2
+                  font-mono
+                  uppercase
+                  tracking-[0.25em]
+                  text-[9px]
+                  text-white/35
+                  block
+                  mb-4
                 "
               >
-                ↗
+                Next Project
               </span>
-            </div>
-          </Link>
+
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+                "
+              >
+                <h2
+                  className="
+                    font-serif
+                    text-[clamp(24px,4vw,56px)]
+                    leading-none
+
+                    transition-transform
+                    duration-500
+                    ease-out
+
+                    group-hover:translate-x-2
+                  "
+                >
+                  {nextProject.title}
+                </h2>
+
+                <span
+                  className="
+                    text-2xl
+                    text-white/35
+
+                    transition-all
+                    duration-500
+                    ease-out
+
+                    group-hover:text-white
+                    group-hover:translate-x-2
+                    group-hover:-translate-y-2
+                  "
+                >
+                  ↗
+                </span>
+              </div>
+            </Link>
+          </div>
         </section>
       )}
     </main>

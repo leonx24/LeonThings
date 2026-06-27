@@ -16,6 +16,9 @@ export default function useSmoothScroll() {
       infinite: false,
     })
 
+    // Expose lenis instance globally for programmatic access
+    window.lenis = lenis
+
     // Animation loop
     function raf(time) {
       lenis.raf(time)
@@ -24,8 +27,27 @@ export default function useSmoothScroll() {
 
     requestAnimationFrame(raf)
 
+    // Global click listener to intercept hash links
+    const handleHashClick = (e) => {
+      const targetLink = e.target.closest("a")
+      if (!targetLink) return
+
+      const href = targetLink.getAttribute("href")
+      if (href && href.startsWith("#")) {
+        e.preventDefault()
+        const targetElement = document.querySelector(href)
+        if (targetElement) {
+          lenis.scrollTo(targetElement)
+        }
+      }
+    }
+
+    document.addEventListener("click", handleHashClick)
+
     // Cleanup
     return () => {
+      document.removeEventListener("click", handleHashClick)
+      window.lenis = null
       lenis.destroy()
     }
   }, [])

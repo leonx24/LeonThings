@@ -1,7 +1,8 @@
+import { useEffect } from "react"
 import GridLines from "../components/gridLines"
 import Navbar from "../components/navbar"
 
-import Hero from "../components/hero"
+import { PixelHero } from "../components/ui/pixel-perfect-hero"
 import Divider from "../components/divider"
 
 import About from "../components/about"
@@ -19,6 +20,24 @@ import useSmoothScroll from "../hooks/useSmoothScroll"
 export default function Home() {
   useSmoothScroll()
 
+  useEffect(() => {
+    // If navigating back to homepage with a hash (e.g. /#works), scroll to it smoothly
+    const hash = window.location.hash
+    if (hash) {
+      const timer = setTimeout(() => {
+        const el = document.querySelector(hash)
+        if (el) {
+          if (window.lenis) {
+            window.lenis.scrollTo(el)
+          } else {
+            el.scrollIntoView({ behavior: "smooth" })
+          }
+        }
+      }, 150)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
   return (
     <>
       <CustomCursor />
@@ -26,7 +45,24 @@ export default function Home() {
       <GridLines />
       <Navbar />
 
-      <Hero />
+      <PixelHero
+        word1="Creative"
+        word2="Developer."
+        description="I develop responsive React web applications, write custom backend integrations, and engineer game systems in Roblox. Focused on making things that look clean and run fast."
+        primaryCta="Explore Design"
+        primaryCtaMobile="Explore"
+        secondaryCta="View GitHub"
+        secondaryCtaMobile="GitHub"
+        onPrimaryClick={() => {
+          if (window.lenis) {
+            window.lenis.scrollTo("#works")
+          } else {
+            const el = document.getElementById("works")
+            if (el) el.scrollIntoView({ behavior: "smooth" })
+          }
+        }}
+        githubUrl="https://github.com/leonx24"
+      />
 
       <Divider />
 

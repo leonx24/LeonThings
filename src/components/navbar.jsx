@@ -1,7 +1,22 @@
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
 
 export default function Navbar() {
+  const location = useLocation()
+  const isHome = location.pathname === "/"
+
+  const handleLogoClick = (e) => {
+    if (isHome) {
+      e.preventDefault()
+      if (window.lenis) {
+        window.lenis.scrollTo("#hero")
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      }
+    }
+  }
+
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -20,19 +35,28 @@ export default function Navbar() {
   const links = [
     {
       name: "About",
-      href: "#about",
+      href: isHome ? "#about" : "/#about",
+      isHash: true,
     },
     {
       name: "Works",
-      href: "#works",
+      href: isHome ? "#works" : "/#works",
+      isHash: true,
+    },
+    {
+      name: "Bot",
+      href: "/bot",
+      isHash: false,
     },
     {
       name: "Services",
-      href: "#services",
+      href: isHome ? "#services" : "/#services",
+      isHash: true,
     },
     {
       name: "Contact",
-      href: "#contact",
+      href: isHome ? "#contact" : "/#contact",
+      isHash: true,
     },
   ]
 
@@ -68,7 +92,9 @@ export default function Navbar() {
           justify-between
         "
       >
-        <span
+        <Link
+          to="/"
+          onClick={handleLogoClick}
           className="
             font-mono
 
@@ -77,10 +103,13 @@ export default function Navbar() {
             tracking-[0.18em]
 
             text-white/60
+            hover:text-white
+            transition-colors
+            duration-300
           "
         >
           Leon
-        </span>
+        </Link>
 
         <ul
           className="
@@ -96,41 +125,78 @@ export default function Navbar() {
             tracking-[0.18em]
           "
         >
-          {links.map((link) => (
-            <li key={link.name}>
-              <a
-                href={link.href}
-                className="
-                  relative
+          {links.map((link) => {
+            const isRouterLink = !link.isHash || !isHome
+            return (
+              <li key={link.name}>
+                {isRouterLink ? (
+                  <Link
+                    to={link.href}
+                    className="
+                      relative
 
-                  text-white/35
+                      text-white/35
 
-                  transition-all
-                  duration-500
-                  ease-out
+                      transition-all
+                      duration-500
+                      ease-out
 
-                  hover:text-white
+                      hover:text-white
 
-                  after:absolute
-                  after:left-0
-                  after:-bottom-1
+                      after:absolute
+                      after:left-0
+                      after:-bottom-1
 
-                  after:h-px
-                  after:w-0
+                      after:h-px
+                      after:w-0
 
-                  after:bg-white
+                      after:bg-white
 
-                  after:transition-all
-                  after:duration-300
-                  after:ease-out
+                      after:transition-all
+                      after:duration-300
+                      after:ease-out
 
-                  hover:after:w-full
-                "
-              >
-                {link.name}
-              </a>
-            </li>
-          ))}
+                      hover:after:w-full
+                    "
+                  >
+                    {link.name}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    className="
+                      relative
+
+                      text-white/35
+
+                      transition-all
+                      duration-500
+                      ease-out
+
+                      hover:text-white
+
+                      after:absolute
+                      after:left-0
+                      after:-bottom-1
+
+                      after:h-px
+                      after:w-0
+
+                      after:bg-white
+
+                      after:transition-all
+                      after:duration-300
+                      after:ease-out
+
+                      hover:after:w-full
+                    "
+                  >
+                    {link.name}
+                  </a>
+                )}
+              </li>
+            )
+          })}
         </ul>
 
         <button
@@ -168,34 +234,64 @@ export default function Navbar() {
         `}
       >
         <div className="bg-black/95 backdrop-blur-xl">
-          {links.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="
-                block
+          {links.map((link) => {
+            const isRouterLink = !link.isHash || !isHome
+            return isRouterLink ? (
+              <Link
+                key={link.name}
+                to={link.href}
+                onClick={() => setOpen(false)}
+                className="
+                  block
 
-                px-8
-                py-4
+                  px-8
+                  py-4
 
-                font-mono
-                text-[11px]
+                  font-mono
+                  text-[11px]
 
-                uppercase
-                tracking-[0.18em]
+                  uppercase
+                  tracking-[0.18em]
 
-                text-white/35
+                  text-white/35
 
-                transition-colors
-                duration-300
+                  transition-colors
+                  duration-300
 
-                hover:text-white
-              "
-            >
-              {link.name}
-            </a>
-          ))}
+                  hover:text-white
+                "
+              >
+                {link.name}
+              </Link>
+            ) : (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="
+                  block
+
+                  px-8
+                  py-4
+
+                  font-mono
+                  text-[11px]
+
+                  uppercase
+                  tracking-[0.18em]
+
+                  text-white/35
+
+                  transition-colors
+                  duration-300
+
+                  hover:text-white
+                "
+              >
+                {link.name}
+              </a>
+            )
+          })}
         </div>
       </div>
     </nav>

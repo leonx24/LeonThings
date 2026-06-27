@@ -1,12 +1,14 @@
 import Reveal from "./reveal"
+import { Atom, Terminal, Cpu, Wind, Gamepad2, Layers } from "lucide-react"
+import { projects } from "../data/projects"
 
 const skills = [
-  "React",
-  "Python",
-  "Node.js",
-  "Tailwind CSS", 
-  "Roblox / Luau",
-  "Vercel",
+  { name: "React", icon: Atom },
+  { name: "Python", icon: Terminal },
+  { name: "Node.js", icon: Cpu },
+  { name: "Tailwind CSS", icon: Wind },
+  { name: "Roblox / Luau", icon: Gamepad2 },
+  { name: "Vercel", icon: Layers },
 ]
 
 export default function About() {
@@ -81,23 +83,49 @@ export default function About() {
           <p
             className="
               mb-12
-
               max-w-155
-
-              text-[13px]
-              leading-[1.95]
-
-              text-white/60
+              text-[15px]
+              leading-[1.8]
+              text-white/50
+              font-light
             "
           >
-            With years of experience building web
-            applications and Roblox systems, I focus
-            on creating products that feel polished,
-            scalable, and thoughtfully crafted.
-            Every decision is made with clarity,
-            performance, and long-term maintainability
-            in mind.
+            I specialize in building <span className="text-white font-normal">modern web experiences</span>, backend integrations, 
+            and <span className="text-white font-normal">scalable game systems</span>. By bridging the gap between React applications, 
+            Python-driven services, and Roblox/Luau engineering, I craft digital products 
+            that are <em className="font-serif italic text-white/80">polished</em>, <em className="font-serif italic text-white/80">performant</em>, and built to scale.
           </p>
+
+          {/* Minimalist Metrics Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-12">
+            {[
+              { value: "02+", label: "Years\nActive" },
+              { value: projects.length > 10 ? "10+" : projects.length.toString().padStart(2, "0"), label: "Projects\nDelivered" },
+              { value: "100%", label: "Precision\nFocused" },
+            ].map((stat, i) => (
+              <div 
+                key={i} 
+                className="
+                  p-5 
+                  border 
+                  border-white/[0.05] 
+                  bg-white/[0.01] 
+                  hover:bg-white/[0.03] 
+                  hover:border-white/10
+                  transition-all 
+                  duration-300
+                  group
+                "
+              >
+                <div className="font-serif text-[clamp(24px,2.5vw,36px)] leading-none text-white mb-2 group-hover:translate-x-1 transition-transform duration-300">
+                  {stat.value}
+                </div>
+                <div className="font-mono text-[9px] uppercase tracking-wider text-white/35 leading-relaxed whitespace-pre-line">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div
             className="
@@ -113,8 +141,12 @@ export default function About() {
           >
             {skills.map((skill) => (
               <div
-                key={skill}
+                key={skill.name}
                 className="
+                  flex
+                  items-center
+                  gap-3
+
                   px-4.5
                   py-3.5
 
@@ -133,11 +165,21 @@ export default function About() {
                   transition-all
                   duration-300
 
-                  hover:bg-[#161616]
+                  hover:bg-white/[0.03]
                   hover:text-white
+                  group
                 "
               >
-                {skill}
+                <skill.icon 
+                  size={14} 
+                  className="
+                    text-white/35 
+                    transition-colors 
+                    duration-300 
+                    group-hover:text-white
+                  " 
+                />
+                {skill.name}
               </div>
             ))}
           </div>

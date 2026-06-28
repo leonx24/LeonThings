@@ -1,14 +1,13 @@
 import Reveal from "./reveal"
-import { Atom, Terminal, Cpu, Wind, Gamepad2, Layers } from "lucide-react"
+import { Atom, Terminal, Cpu, Wind, Gamepad2 } from "lucide-react"
 import { projects } from "../data/projects"
 
 const skills = [
   { name: "React", icon: Atom },
   { name: "Python", icon: Terminal },
-  { name: "Node.js", icon: Cpu },
+  { name: "Typescript", icon: Cpu },
   { name: "Tailwind CSS", icon: Wind },
   { name: "Roblox / Luau", icon: Gamepad2 },
-  { name: "Vercel", icon: Layers },
 ]
 
 export default function About() {

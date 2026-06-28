@@ -1,6 +1,7 @@
 import Reveal from "./reveal"
 import { projects } from "../data/projects"
 import { Link } from "react-router-dom"
+import LazyImage from "./LazyImage"
 
 export default function Works() {
   return (
@@ -76,10 +77,10 @@ export default function Works() {
                     {/* Subtle hover gradient shine */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 z-10" />
                     
-                    <img
+                    <LazyImage
                       src={project.gallery[0]}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
 

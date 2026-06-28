@@ -2,8 +2,7 @@ import Leonx from "../assets/images/leonx.webp"
 import Leonx2 from "../assets/images/leonx2.webp"
 import Leonx3 from "../assets/images/leonx3.webp"
 
-import dcbot from "../assets/images/dcbot.webp"
-
+import dcbot from "../assets/images/leonxbot.webp"
 
 export const projects = [
   {
@@ -14,7 +13,7 @@ export const projects = [
     slug: "leonx",
 
     tags: [
-      "Luau",
+      "Lua",
       "Roblox",
       "UI"
     ],
@@ -47,8 +46,8 @@ export const projects = [
     slug: "discord-bot",
 
     tags: [
-      "Python",
-      "Railway"
+      "Typescriot",
+      "Javascript"
     ],
 
     year: "2026",

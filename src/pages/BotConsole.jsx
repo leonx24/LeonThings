@@ -13,18 +13,38 @@ import {
   ArrowRight,
   ArrowLeft,
   Menu,
-  X
+  X,
+  Gamepad
 } from "lucide-react"
 
 import GridLines from "../components/gridLines"
 import Noise from "../components/noise"
 import CustomCursor from "../components/CustomCursor"
 
+const OWNER_IDS = [
+  import.meta.env.VITE_OWNER_ID,
+  "1464209826010763463" // Default fallback owner ID
+].filter(Boolean)
+
 export default function BotConsole() {
   const [activeSection, setActiveSection] = useState("Dashboard")
   const [isRestarting, setIsRestarting] = useState(false)
   const [botStatus, setBotStatus] = useState("Online")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Auth & Roles State
+  const [userProfile, setUserProfile] = useState(null)
+  const [isOwner, setIsOwner] = useState(false)
+  const [hasAllowedRole, setHasAllowedRole] = useState(false)
+
+  // Roblox Server Finder State
+  const [robloxPlaceId, setRobloxPlaceId] = useState("")
+  const [robloxGameName, setRobloxGameName] = useState("")
+  const [serverResults, setServerResults] = useState([])
+  const [isSearchingServers, setIsSearchingServers] = useState(false)
+
+
+
 
   // Discord Integration & Webhook Form State
   const [username, setUsername] = useState("")
@@ -121,6 +141,269 @@ export default function BotConsole() {
       ...prev
     ])
   }
+
+  const fetchUserProfile = async (token) => {
+    try {
+      const res = await fetch("https://discord.com/api/users/@me", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (res.ok) {
+        const user = await res.json()
+        localStorage.setItem("discord_token", token)
+        localStorage.setItem("discord_user", JSON.stringify(user))
+        
+        setUserProfile(user)
+        
+        const guildId = import.meta.env.VITE_GUILD_ID || "1515259972322394920"
+        const allowedRoleId = import.meta.env.VITE_ALLOWED_ROLE_ID || "1519667788883562506"
+        
+        if (OWNER_IDS.includes(user.id)) {
+          setIsOwner(true)
+          setHasAllowedRole(true)
+          localStorage.setItem("discord_has_role", "true")
+          showToast(`Welcome back, Owner ${user.username}!`, "success")
+          addSystemLog("info", `Owner session authenticated: ${user.username} (${user.id})`)
+          return
+        }
+        
+        setIsOwner(false)
+        try {
+          const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+          if (memberRes.ok) {
+            const member = await memberRes.json()
+            if (member.roles && member.roles.includes(allowedRoleId)) {
+              setHasAllowedRole(true)
+              localStorage.setItem("discord_has_role", "true")
+              showToast(`Welcome back, User ${user.username}!`, "success")
+              addSystemLog("info", `User session authenticated: ${user.username} (${user.id})`)
+            } else {
+              setHasAllowedRole(false)
+              localStorage.setItem("discord_has_role", "false")
+              showToast("Access Denied: You do not have the required Discord role.", "error")
+              addSystemLog("warn", `User ${user.username} denied: missing role ID ${allowedRoleId}`)
+            }
+          } else {
+            setHasAllowedRole(false)
+            localStorage.setItem("discord_has_role", "false")
+            showToast("Access Denied: You are not a member of the required Discord server.", "error")
+            addSystemLog("warn", `User ${user.username} denied: not in guild ID ${guildId}`)
+          }
+        } catch (e) {
+          console.error(e)
+          setHasAllowedRole(false)
+          localStorage.setItem("discord_has_role", "false")
+          showToast("Failed to verify server roles from Discord.", "error")
+        }
+      } else {
+        logout()
+        showToast("Session expired or invalid token.", "error")
+      }
+    } catch (e) {
+      console.error(e)
+      showToast("Failed to connect to Discord API.", "error")
+    }
+  }
+
+  const loginWithDiscord = () => {
+    const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID || "1519666233539301407"
+    const redirectUri = window.location.origin + window.location.pathname
+    const scope = "identify guilds.members.read"
+    
+    window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent(scope)}`
+  }
+
+
+  const logout = () => {
+    localStorage.removeItem("discord_token")
+    localStorage.removeItem("discord_user")
+    localStorage.removeItem("discord_has_role")
+    setUserProfile(null)
+    setIsOwner(false)
+    setHasAllowedRole(false)
+    setActiveSection("Dashboard")
+    showToast("Successfully logged out.", "info")
+    addSystemLog("info", "User session terminated")
+  }
+
+  const searchRobloxServers = async (placeId) => {
+    if (!placeId.trim()) return
+    setIsSearchingServers(true)
+    setServerResults([])
+    
+    let allNonFullServers = []
+    let cursor = ""
+    let pagesSearched = 0
+    const maxPages = 8 // Limit search to 8 pages (800 servers max) to avoid hitting proxy limits
+    let hasFetchedSuccessfully = false
+
+    const fetchRobloxPage = async (url) => {
+      const statsUrl = import.meta.env.VITE_BOT_API_URL
+      const botProxyBase = statsUrl ? statsUrl.replace("/api/stats", "/api/proxy") : null
+      
+      if (botProxyBase) {
+        try {
+          const proxyUrl = `${botProxyBase}?url=${encodeURIComponent(url)}`
+          const res = await fetch(proxyUrl)
+          if (res.ok) {
+            return await res.json()
+          }
+        } catch (e) {
+          console.warn("Bot custom proxy failed, falling back to allorigins...", e)
+        }
+      }
+      
+      const fallbackProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
+      const res = await fetch(fallbackProxyUrl)
+      if (!res.ok) {
+        throw new Error("Proxy connection failed")
+      }
+      
+      const wrapper = await res.json()
+      if (!wrapper.contents) {
+        if (wrapper.status && wrapper.status.http_code) {
+          throw new Error(`Roblox API returned status ${wrapper.status.http_code}`)
+        }
+        throw new Error("Invalid response from proxy")
+      }
+      
+      return JSON.parse(wrapper.contents)
+    }
+
+    const fetchRobloxGameName = async (pid) => {
+      try {
+        const resolverUrl = `https://apis.roblox.com/universes/v1/places/${pid}/universe`
+        const universeData = await fetchRobloxPage(resolverUrl)
+        if (universeData && universeData.universeId) {
+          const detailsUrl = `https://games.roblox.com/v1/games?universeIds=${universeData.universeId}`
+          const detailsData = await fetchRobloxPage(detailsUrl)
+          if (detailsData && detailsData.data && detailsData.data.length > 0) {
+            return detailsData.data[0].name
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch game name details", e)
+      }
+      return null
+    }
+    
+    try {
+      setRobloxGameName("")
+      fetchRobloxGameName(placeId).then(name => {
+        if (name) setRobloxGameName(name)
+      })
+
+      while (pagesSearched < maxPages) {
+        let targetUrl = `https://games.roblox.com/v1/games/${placeId}/servers/Public?limit=100`
+        if (cursor) {
+          targetUrl += `&cursor=${cursor}`
+        }
+        
+        let data
+        try {
+          data = await fetchRobloxPage(targetUrl)
+          hasFetchedSuccessfully = true
+        } catch (e) {
+          console.error(`Page ${pagesSearched} fetch failed`, e)
+          break // Stop querying more pages, show whatever we gathered so far
+        }
+        
+        if (data.errors && data.errors.length > 0) {
+          showToast(`Roblox: ${data.errors[0].message}`, "error")
+          setIsSearchingServers(false)
+          return
+        }
+        
+        if (data.data && Array.isArray(data.data)) {
+          if (data.data.length === 0 && allNonFullServers.length === 0) {
+            showToast("No active servers are currently running (game is empty).", "info")
+            setIsSearchingServers(false)
+            return
+          }
+          
+          const nonFull = data.data.filter(srv => srv.playing < srv.maxPlayers)
+          allNonFullServers = [...allNonFullServers, ...nonFull]
+          
+          // Stop pagination if we have found enough non-full servers (at least 10) or there is no next page
+          if (allNonFullServers.length >= 10 || !data.nextPageCursor) {
+            break;
+          }
+          
+          cursor = data.nextPageCursor
+          pagesSearched++
+        } else {
+          break;
+        }
+      }
+      
+      if (!hasFetchedSuccessfully) {
+        showToast("Error: Place ID invalid/private, or CORS proxy blocked. Try a valid public Place ID (e.g. 1889393188).", "error")
+      } else if (allNonFullServers.length === 0) {
+        showToast("All active servers for this game (checked up to 800 servers) are currently full!", "warn")
+      } else {
+        // Sort by fewest players first
+        allNonFullServers.sort((a, b) => a.playing - b.playing)
+        // Keep top 20 results to avoid cluttering the UI
+        setServerResults(allNonFullServers.slice(0, 20))
+        showToast(`Found ${allNonFullServers.length} non-full servers!`, "success")
+      }
+    } catch (err) {
+      console.error(err)
+      showToast("Error: Place ID invalid/private, or CORS proxy blocked. Try a valid public Place ID (e.g. 1889393188).", "error")
+    } finally {
+      setIsSearchingServers(false)
+    }
+  }
+
+  useEffect(() => {
+    // 1. Check if returning from Discord OAuth callback
+    const hash = window.location.hash
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1))
+      const accessToken = params.get("access_token")
+      if (accessToken) {
+        window.history.replaceState(null, "", window.location.pathname)
+        setTimeout(() => {
+          fetchUserProfile(accessToken)
+        }, 0)
+        return
+      }
+    }
+
+    // 2. Load from cache
+    const storedToken = localStorage.getItem("discord_token")
+    const storedUser = localStorage.getItem("discord_user")
+    const storedAllowedRole = localStorage.getItem("discord_has_role") === "true"
+    
+    if (storedToken && storedUser) {
+      setTimeout(() => {
+        const user = JSON.parse(storedUser)
+        setUserProfile(user)
+        if (OWNER_IDS.includes(user.id)) {
+          setIsOwner(true)
+          setHasAllowedRole(true)
+        } else {
+          setIsOwner(false)
+          setHasAllowedRole(storedAllowedRole)
+        }
+      }, 0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!isOwner && (activeSection === "Users" || activeSection === "Settings")) {
+      setTimeout(() => {
+        setActiveSection("Dashboard")
+      }, 0)
+    }
+  }, [isOwner, activeSection])
+
 
   // Uptime formatting
   const formatUptime = (ms) => {
@@ -379,7 +662,7 @@ export default function BotConsole() {
   }
 
   return (
-    <main className="bg-[#0A0A0C] text-[#F0EFE8] h-screen w-screen overflow-hidden flex flex-col md:flex-row font-sans antialiased selection:bg-[#D4AF37]/35 selection:text-white relative">
+    <main className="bg-[#0A0A0C] text-[#F0EFE8] min-h-screen md:h-screen w-full md:w-screen overflow-y-auto md:overflow-hidden flex flex-col md:flex-row font-sans antialiased selection:bg-[#D4AF37]/35 selection:text-white relative">
       <CustomCursor />
       <GridLines />
       <Noise />
@@ -479,17 +762,62 @@ export default function BotConsole() {
             </div>
           </div>
 
+          {/* User Profile / Login Area */}
+          <div className="pb-5 border-b border-white/[0.06] mb-5 font-mono">
+            {userProfile ? (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  {userProfile.avatar ? (
+                    <img 
+                      src={`https://cdn.discordapp.com/avatars/${userProfile.id}/${userProfile.avatar}.png?size=64`} 
+                      alt="User Avatar" 
+                      className="w-8 h-8 rounded-full border border-[#D4AF37]/30"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] text-[12px] font-bold">
+                      {userProfile.username[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[11px] font-bold text-white truncate">{userProfile.username}</span>
+                    <span className="text-[8px] text-[#D4AF37] uppercase tracking-wider font-extrabold mt-0.5">
+                      {isOwner ? "Owner Mode" : hasAllowedRole ? "User Mode (@user)" : "Guest Mode"}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={logout}
+                  className="w-full py-1.5 rounded-sm bg-white/[0.02] hover:bg-red-500/10 border border-white/[0.06] hover:border-red-500/20 text-[#8A8990] hover:text-red-400 transition-all duration-200 text-[9px] uppercase tracking-wider font-bold"
+                >
+                  Logout Session
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <span className="text-[8px] uppercase tracking-wider text-[#8A8990] mb-1">Access Configuration</span>
+                <button
+                  onClick={loginWithDiscord}
+                  className="w-full py-2 rounded-sm bg-[#5865F2]/10 hover:bg-[#5865F2]/20 border border-[#5865F2]/20 hover:border-[#5865F2]/30 text-[#5865F2] hover:text-[#7289DA] transition-all duration-200 text-[9px] uppercase tracking-widest font-bold"
+                >
+                  Login with Discord
+                </button>
+
+              </div>
+            )}
+          </div>
+
           {/* Nav Items */}
           <nav>
             <ul className="flex flex-col gap-1.5">
               {[
                 { name: "Dashboard", icon: LayoutDashboard },
                 { name: "Commands", icon: Terminal, badge: commandsList.length, badgeType: "gold" },
+                { name: "Game Servers", icon: Gamepad },
                 { name: "Servers", icon: Server, badge: liveStats.guilds, badgeType: "gold" },
                 { name: "Logs", icon: FileText, badge: systemLogs.filter(l => l.type === "warn").length + "!", badgeType: "red" },
                 { name: "Users", icon: Users },
                 { name: "Settings", icon: Settings },
-              ].map((item) => {
+              ].filter(item => isOwner || (item.name !== "Users" && item.name !== "Settings")).map((item) => {
                 const Icon = item.icon
                 const isActive = activeSection === item.name
                 return (
@@ -579,7 +907,7 @@ export default function BotConsole() {
       </aside>
 
       {/* CONTENT WORKSPACE (Fills remaining width and spans full height) */}
-      <section className="flex-grow flex flex-col h-full overflow-hidden bg-[#0A0A0C]/40 relative z-10">
+      <section className="flex-grow flex flex-col min-h-screen md:h-full overflow-y-auto md:overflow-hidden bg-[#0A0A0C]/40 relative z-10">
         
         {/* TOPBAR */}
         <header className="h-[56px] md:h-[65px] px-4 md:px-8 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between shrink-0">
@@ -602,58 +930,62 @@ export default function BotConsole() {
           </div>
 
           <div className="flex gap-2">
-            <button
-              onClick={triggerAIAssist}
-              className="
-                px-2.5 md:px-3.5
-                py-1.5
-                bg-white/[0.02]
-                hover:bg-white/[0.05]
-                border
-                border-white/[0.06]
-                hover:border-white/15
-                rounded-sm
-                flex
-                items-center
-                gap-1.5 md:gap-2
-                font-mono
-                text-[9px] md:text-[10px]
-                text-[#8A8990]
-                hover:text-[#F0EFE8]
-                transition-all
-                duration-150
-              "
-            >
-              <Sparkles size={11} className="text-[#D4AF37]/75" />
-              <span className="hidden sm:inline">AI Assist</span>
-            </button>
+            {isOwner && (
+              <>
+                <button
+                  onClick={triggerAIAssist}
+                  className="
+                    px-2.5 md:px-3.5
+                    py-1.5
+                    bg-white/[0.02]
+                    hover:bg-white/[0.05]
+                    border
+                    border-white/[0.06]
+                    hover:border-white/15
+                    rounded-sm
+                    flex
+                    items-center
+                    gap-1.5 md:gap-2
+                    font-mono
+                    text-[9px] md:text-[10px]
+                    text-[#8A8990]
+                    hover:text-[#F0EFE8]
+                    transition-all
+                    duration-150
+                  "
+                >
+                  <Sparkles size={11} className="text-[#D4AF37]/75" />
+                  <span className="hidden sm:inline">AI Assist</span>
+                </button>
 
-            <button
-              onClick={triggerRestart}
-              disabled={isRestarting}
-              className="
-                px-2.5 md:px-3.5
-                py-1.5
-                bg-[#D4AF37]/10
-                hover:bg-[#D4AF37]/20
-                border
-                border-[#D4AF37]/20
-                hover:border-[#D4AF37]/30
-                rounded-sm
-                flex
-                items-center
-                gap-1.5 md:gap-2
-                font-mono
-                text-[9px] md:text-[10px]
-                text-[#D4AF37]
-                transition-all
-                duration-150
-                disabled:opacity-50
-              "
-            >
-              <RotateCw size={11} className={`text-[#D4AF37] ${isRestarting ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Restart Bot</span>
-            </button>
+                <button
+                  onClick={triggerRestart}
+                  disabled={isRestarting}
+                  className="
+                    px-2.5 md:px-3.5
+                    py-1.5
+                    bg-[#D4AF37]/10
+                    hover:bg-[#D4AF37]/20
+                    border
+                    border-[#D4AF37]/20
+                    hover:border-[#D4AF37]/30
+                    rounded-sm
+                    flex
+                    items-center
+                    gap-1.5 md:gap-2
+                    font-mono
+                    text-[9px] md:text-[10px]
+                    text-[#D4AF37]
+                    transition-all
+                    duration-150
+                    disabled:opacity-50
+                  "
+                >
+                  <RotateCw size={11} className={`text-[#D4AF37] ${isRestarting ? "animate-spin" : ""}`} />
+                  <span className="hidden sm:inline">Restart Bot</span>
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -751,35 +1083,34 @@ export default function BotConsole() {
                   
                   {/* Activity Chart */}
                   <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] mb-4 block">Activity Chart</span>
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] mb-4 block">Command Activity Chart</span>
                     
                     <div className="flex flex-col gap-2.5">
-                      {[
-                        { day: "Mon", val: 40, active: false },
-                        { day: "Tue", val: 65, active: false },
-                        { day: "Wed", val: 48, active: false },
-                        { day: "Thu", val: 82, active: false },
-                        { day: "Fri", val: 74, active: false },
-                        { day: "Sat", val: 110, active: true },
-                        { day: "Sun", val: 95, active: false }
-                      ].map((d) => (
-                        <div key={d.day} className="flex items-center gap-3">
-                          <span className="font-mono text-[9px] text-[#8A8990] w-7">{d.day}</span>
-                          <div className="flex-1 h-3 bg-white/[0.02] border border-white/[0.04] rounded-sm overflow-hidden p-[1px]">
-                            <div
-                              className={`
-                                h-full 
-                                rounded-sm 
-                                transition-all 
-                                duration-500
-                                ${d.active ? "bg-[#D4AF37]" : "bg-[#D4AF37]/45"}
-                              `}
-                              style={{ width: `${(d.val / 110) * 100}%` }}
-                            />
-                          </div>
-                          <span className="font-mono text-[9px] text-[#F0EFE8] w-8 text-right">{d.val}</span>
-                        </div>
-                      ))}
+                      {commandUsage.length === 0 ? (
+                        <span className="text-[#8A8990] font-mono text-[10.5px]">No command records in database.</span>
+                      ) : (
+                        commandUsage.slice(0, 7).map((cmd, i) => {
+                          const maxUses = Math.max(...commandUsage.map(c => c.uses)) || 1;
+                          return (
+                            <div key={cmd.command} className="flex items-center gap-3">
+                              <span className="font-mono text-[9px] text-[#8A8990] w-20 truncate text-left">/{cmd.command}</span>
+                              <div className="flex-1 h-3 bg-white/[0.02] border border-white/[0.04] rounded-sm overflow-hidden p-[1px]">
+                                <div
+                                  className={`
+                                    h-full 
+                                    rounded-sm 
+                                    transition-all 
+                                    duration-500
+                                    ${i === 0 ? "bg-[#D4AF37]" : "bg-[#D4AF37]/45"}
+                                  `}
+                                  style={{ width: `${(cmd.uses / maxUses) * 100}%` }}
+                                />
+                              </div>
+                              <span className="font-mono text-[9px] text-[#F0EFE8] w-8 text-right">{cmd.uses}</span>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
 
@@ -886,33 +1217,35 @@ export default function BotConsole() {
                     ].map((act, index) => (
                       <button
                         key={index}
-                        onClick={act.action}
-                        className="
+                        onClick={isOwner ? act.action : () => showToast("Owner credentials required.", "error")}
+                        disabled={!isOwner}
+                        className={`
                           w-full
                           px-4
                           py-3
                           bg-white/[0.01]
-                          hover:bg-[#D4AF37]/5
                           border
                           border-white/[0.04]
-                          hover:border-[#D4AF37]/20
                           rounded-md
                           text-left
                           font-mono
                           text-[10px]
                           tracking-wider
-                          text-[#8A8990]
-                          hover:text-[#D4AF37]
                           transition-all
                           duration-150
                           flex
                           items-center
                           justify-between
                           group
-                        "
+                          ${
+                            isOwner 
+                              ? "hover:bg-[#D4AF37]/5 hover:border-[#D4AF37]/20 text-[#8A8990] hover:text-[#D4AF37] cursor-pointer" 
+                              : "opacity-40 text-[#8A8990]/50 cursor-not-allowed"
+                          }
+                        `}
                       >
                         <span>{act.label}</span>
-                        <ArrowRight size={10} className="text-[#8A8990] group-hover:text-[#D4AF37] transition-colors" />
+                        <ArrowRight size={10} className={`text-[#8A8990] ${isOwner ? "group-hover:text-[#D4AF37]" : ""} transition-colors`} />
                       </button>
                     ))}
                   </div>
@@ -928,86 +1261,88 @@ export default function BotConsole() {
             <div className="flex flex-col gap-6 max-w-7xl mx-auto">
               
               {/* Add Command Form Card */}
-              <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
-                <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] mb-4 block">Register New Command Mockup</span>
-                
-                <form onSubmit={handleAddCommandSubmit} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_120px] gap-4 items-end">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-mono text-[8px] uppercase tracking-wider text-[#8A8990]">Command Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. timeout"
-                      value={newCmdName}
-                      onChange={(e) => setNewCmdName(e.target.value)}
-                      className="
-                        w-full
-                        px-3
-                        py-2
-                        bg-[#0A0A0C]
-                        border
-                        border-white/10
-                        focus:border-[#D4AF37]/40
-                        text-white
-                        font-mono
-                        text-[11px]
-                        focus:outline-none
-                        transition-all
-                        rounded-sm
-                      "
-                    />
-                  </div>
+              {isOwner && (
+                <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] mb-4 block">Register New Command Mockup</span>
                   
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-mono text-[8px] uppercase tracking-wider text-[#8A8990]">Command Description</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Timeout a user in the Discord guild for spamming"
-                      value={newCmdDesc}
-                      onChange={(e) => setNewCmdDesc(e.target.value)}
+                  <form onSubmit={handleAddCommandSubmit} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_120px] gap-4 items-end">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-mono text-[8px] uppercase tracking-wider text-[#8A8990]">Command Name</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. timeout"
+                        value={newCmdName}
+                        onChange={(e) => setNewCmdName(e.target.value)}
+                        className="
+                          w-full
+                          px-3
+                          py-2
+                          bg-[#0A0A0C]
+                          border
+                          border-white/10
+                          focus:border-[#D4AF37]/40
+                          text-white
+                          font-mono
+                          text-[11px]
+                          focus:outline-none
+                          transition-all
+                          rounded-sm
+                        "
+                      />
+                    </div>
+                    
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-mono text-[8px] uppercase tracking-wider text-[#8A8990]">Command Description</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Timeout a user in the Discord guild for spamming"
+                        value={newCmdDesc}
+                        onChange={(e) => setNewCmdDesc(e.target.value)}
+                        className="
+                          w-full
+                          px-3
+                          py-2
+                          bg-[#0A0A0C]
+                          border
+                          border-white/10
+                          focus:border-[#D4AF37]/40
+                          text-white
+                          font-mono
+                          text-[11px]
+                          focus:outline-none
+                          transition-all
+                          rounded-sm
+                        "
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
                       className="
                         w-full
-                        px-3
                         py-2
-                        bg-[#0A0A0C]
+                        bg-[#D4AF37]/10
+                        hover:bg-[#D4AF37]/20
                         border
-                        border-white/10
-                        focus:border-[#D4AF37]/40
-                        text-white
+                        border-[#D4AF37]/20
+                        hover:border-[#D4AF37]/35
+                        text-[#D4AF37]
                         font-mono
-                        text-[11px]
-                        focus:outline-none
+                        text-[10px]
+                        uppercase
+                        tracking-widest
                         transition-all
                         rounded-sm
+                        font-bold
                       "
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="
-                      w-full
-                      py-2
-                      bg-[#D4AF37]/10
-                      hover:bg-[#D4AF37]/20
-                      border
-                      border-[#D4AF37]/20
-                      hover:border-[#D4AF37]/35
-                      text-[#D4AF37]
-                      font-mono
-                      text-[10px]
-                      uppercase
-                      tracking-widest
-                      transition-all
-                      rounded-sm
-                      font-bold
-                    "
-                  >
-                    Add Cmd
-                  </button>
-                </form>
-              </div>
+                    >
+                      Add Cmd
+                    </button>
+                  </form>
+                </div>
+              )}
 
               {/* Commands table */}
               <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
@@ -1057,6 +1392,178 @@ export default function BotConsole() {
                   </table>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* VIEW Game Servers */}
+          {activeSection === "Game Servers" && (!userProfile || (!isOwner && !hasAllowedRole)) && (
+            <div className="bg-[#16161C] border border-white/[0.06] p-8 rounded-md max-w-2xl mx-auto text-center flex flex-col items-center justify-center gap-5">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mb-2">
+                <Gamepad size={28} />
+              </div>
+              <h2 className="text-white font-serif text-[22px] tracking-wide">Access Restricted</h2>
+              <p className="text-[#8A8990] text-[12px] font-sans leading-relaxed max-w-sm">
+                {!userProfile 
+                  ? "Please login with Discord to access the Game Server Finder tool." 
+                  : "You do not have the required Discord role to use this feature. Access is granted to verified server members only."}
+              </p>
+              {!userProfile && (
+                <button
+                  onClick={loginWithDiscord}
+                  className="px-6 py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white font-mono text-[10px] uppercase tracking-wider font-bold rounded-sm transition-all cursor-pointer"
+                >
+                  Login with Discord
+                </button>
+              )}
+            </div>
+          )}
+
+          {activeSection === "Game Servers" && userProfile && (isOwner || hasAllowedRole) && (
+            <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+              
+              {/* Search Form Card */}
+              <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
+                <div className="flex items-center justify-between mb-4 border-b border-white/[0.04] pb-3">
+                  <div>
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] block">Game Server Locator</span>
+                    <h2 className="text-white font-semibold text-[13px] tracking-wide mt-1">
+                      /game-server place_id {robloxGameName && <span className="text-[#D4AF37] ml-2 font-mono">({robloxGameName})</span>}
+                    </h2>
+                  </div>
+                  <span className="font-mono text-[9px] uppercase bg-[#D4AF37]/10 border border-[#D4AF37]/25 text-[#D4AF37] px-2 py-0.5 rounded-sm font-bold tracking-wider">
+                    Role: @user
+                  </span>
+                </div>
+                
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    searchRobloxServers(robloxPlaceId);
+                  }}
+                  className="grid grid-cols-1 md:grid-cols-[1fr_120px] gap-4 items-end"
+                >
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-mono text-[8px] uppercase tracking-wider text-[#8A8990]">Roblox Place ID</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Enter Roblox Place ID (e.g. 1889393188)"
+                      value={robloxPlaceId}
+                      onChange={(e) => setRobloxPlaceId(e.target.value.replace(/\D/g, ""))}
+                      className="
+                        w-full
+                        px-3
+                        py-2
+                        bg-[#0A0A0C]
+                        border
+                        border-white/10
+                        focus:border-[#D4AF37]/40
+                        text-white
+                        font-mono
+                        text-[11px]
+                        focus:outline-none
+                        transition-all
+                        rounded-sm
+                      "
+                    />
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    disabled={isSearchingServers}
+                    className="
+                      w-full
+                      py-2
+                      bg-[#D4AF37]/10
+                      hover:bg-[#D4AF37]/20
+                      border
+                      border-[#D4AF37]/20
+                      hover:border-[#D4AF37]/35
+                      text-[#D4AF37]
+                      font-mono
+                      text-[10px]
+                      uppercase
+                      tracking-widest
+                      transition-all
+                      rounded-sm
+                      font-bold
+                      disabled:opacity-50
+                      cursor-pointer
+                    "
+                  >
+                    {isSearchingServers ? "Searching..." : "Search"}
+                  </button>
+                </form>
+              </div>
+
+              {/* Server Results list */}
+              <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md">
+                <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990] mb-5 block">
+                  {robloxGameName ? `Available Non-Full Servers for: ${robloxGameName}` : "Available Non-Full Servers (Ordered by Fewest Players)"}
+                </span>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-mono text-[11px] border-collapse leading-relaxed">
+                    <thead>
+                      <tr className="border-b border-white/[0.08] text-[#8A8990]">
+                        <th className="pb-3 font-normal">Job ID / Instance</th>
+                        <th className="pb-3 font-normal">Players</th>
+                        <th className="pb-3 font-normal">Ping</th>
+                        <th className="pb-3 font-normal text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {serverResults.length === 0 ? (
+                        <tr>
+                          <td colSpan={4} className="py-8 text-[#8A8990] text-center font-mono">
+                            {isSearchingServers ? "Fetching active servers from Roblox APIs..." : "Enter a Place ID above and search to view servers."}
+                          </td>
+                        </tr>
+                      ) : (
+                        serverResults.map((srv) => (
+                          <tr key={srv.id} className="border-b border-white/[0.03] last:border-b-0 hover:bg-white/[0.01]">
+                            <td className="py-3 text-white max-w-[150px] sm:max-w-none truncate pr-3 select-text text-left">
+                              {srv.id}
+                            </td>
+                            <td className="py-3 text-white">
+                              <span className="text-[#4ADE80] font-bold">{srv.playing}</span>
+                              <span className="text-white/30"> / </span>
+                              <span className="text-white/50">{srv.maxPlayers}</span>
+                            </td>
+                            <td className="py-3 text-[#8A8990]">
+                              {srv.ping ? `${srv.ping}ms` : "N/A"}
+                            </td>
+                            <td className="py-3 text-right">
+                              <a
+                                href={`roblox://experiences/start?placeId=${robloxPlaceId}&gameInstanceId=${srv.id}`}
+                                className="
+                                  px-2.5
+                                  py-1
+                                  rounded-sm
+                                  text-[9px]
+                                  uppercase
+                                  font-bold
+                                  bg-[#D4AF37]/10
+                                  hover:bg-[#D4AF37]/20
+                                  border
+                                  border-[#D4AF37]/20
+                                  hover:border-[#D4AF37]/35
+                                  text-[#D4AF37]
+                                  transition-all
+                                  inline-block
+                                  text-center
+                                "
+                              >
+                                Join
+                              </a>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
             </div>
           )}
@@ -1077,20 +1584,31 @@ export default function BotConsole() {
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { name: "Leon's Lounge", id: "1515261708531404920", members: "450", cmds: "2,482" },
-                      { name: "Fish It Community", id: "1515320618839445515", members: "380", cmds: "1,842" },
-                      { name: "Roblox Scripting Hub", id: "1519760077853032488", members: "192", cmds: "920" },
-                      { name: "Developer Workspace", id: "1464209826010763463", members: "128", cmds: "640" },
-                      { name: "Admin Test Chamber", id: "1519681008834842724", members: "98", cmds: "410" }
-                    ].map((srv) => (
-                      <tr key={srv.id} className="border-b border-white/[0.03] last:border-b-0 hover:bg-white/[0.01]">
-                        <td className="py-3 text-white font-medium">{srv.name}</td>
-                        <td className="py-3 text-[#8A8990]/65">{srv.id}</td>
-                        <td className="py-3 text-[#8A8990]">{srv.members}</td>
-                        <td className="py-3 text-right text-[#D4AF37] font-bold">{srv.cmds}</td>
+                    {serversList.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-4 text-[#8A8990] text-center font-mono">No active servers linked to bot.</td>
                       </tr>
-                    ))}
+                    ) : (
+                      serversList.map((srv) => (
+                        <tr key={srv.id} className="border-b border-white/[0.03] last:border-b-0 hover:bg-white/[0.01]">
+                          <td className="py-3 text-white font-medium flex items-center gap-3">
+                            {srv.icon ? (
+                              <img src={srv.icon} alt={srv.name} className="w-5 h-5 rounded-full border border-white/10 shrink-0 object-cover" />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-neutral-900 border border-white/10 flex items-center justify-center font-serif text-[8px] font-bold text-[#D4AF37] shrink-0">
+                                {srv.name[0]}
+                              </div>
+                            )}
+                            {srv.name}
+                          </td>
+                          <td className="py-3 text-[#8A8990]/65">{srv.id}</td>
+                          <td className="py-3 text-[#8A8990]">{srv.members}</td>
+                          <td className="py-3 text-right text-[#D4AF37] font-bold">
+                            {srv.cmds ? srv.cmds.toLocaleString() : (srv.members * 12).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

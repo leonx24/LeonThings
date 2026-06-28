@@ -2,14 +2,11 @@ import { useState, useEffect, useRef } from "react"
 
 export default function LazyImage({ src, alt, className, priority = false }) {
   const [isLoaded, setIsLoaded] = useState(false)
-  const [isInView, setIsInView] = useState(false)
+  const [isInView, setIsInView] = useState(priority)
   const imgRef = useRef(null)
 
   useEffect(() => {
-    if (priority) {
-      setIsInView(true)
-      return
-    }
+    if (priority) return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -25,13 +22,14 @@ export default function LazyImage({ src, alt, className, priority = false }) {
       }
     )
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current)
+    const currentRef = imgRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
     }
 
     return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current)
+      if (currentRef) {
+        observer.unobserve(currentRef)
       }
     }
   }, [priority])

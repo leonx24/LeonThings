@@ -1213,8 +1213,8 @@ export default function BotConsole() {
                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Cara Penggunaan di Roblox</span>
                       <div className="bg-[#0A0A0C] border border-white/10 p-3 rounded-sm relative">
                         <pre className="text-[9px] font-mono text-cyan-400 overflow-x-auto whitespace-pre-wrap select-all leading-normal">
-{`_G.Key = "${userKeyData.key}"
-loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
+{`_G.Key = "${showFullKey ? userKeyData.key : "LEONX-••••-••••-••••"}"
+loadstring(game:HttpGet("https://leonthings.my.id/loader.lua"))()`}
                         </pre>
                         <button
                           onClick={() => {
@@ -1266,7 +1266,7 @@ loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
                         <div className="flex justify-between py-2 border-b border-white/[0.03]">
                           <span className="text-[#8A8990]">Cooldown Status:</span>
                           <span className="text-[#F0EFE8] font-bold">
-                            {userKeyData.cooldownRemainingHours > 0 ? `${userKeyData.cooldownRemainingHours} Hours Left` : "Ready"}
+                            {userKeyData.cooldownRemainingMinutes > 0 ? `${userKeyData.cooldownRemainingMinutes} Minutes Left` : "Ready"}
                           </span>
                         </div>
                       </div>
@@ -1275,13 +1275,13 @@ loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
                     <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Reset Hardware & Binding</span>
                       
-                      {userKeyData.cooldownRemainingHours > 0 ? (
+                      {userKeyData.cooldownRemainingMinutes > 0 ? (
                         <div className="p-3.5 bg-yellow-500/10 border border-yellow-500/20 rounded-sm flex items-start gap-2.5">
                           <AlertCircle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
                           <div className="font-mono text-[9px] text-yellow-500/90 leading-relaxed">
                             <span className="font-bold block">Reset Terkunci (Cooldown)</span>
                             Anda baru saja mereset HWID atau Roblox ID Anda baru-baru ini. 
-                            Anda dapat melakukan reset perangkat kembali dalam <strong className="text-white bg-yellow-500/20 px-1 rounded">{userKeyData.cooldownRemainingHours} jam</strong>.
+                            Anda dapat melakukan reset perangkat kembali dalam <strong className="text-white bg-yellow-500/20 px-1 rounded">{userKeyData.cooldownRemainingMinutes} menit</strong>.
                           </div>
                         </div>
                       ) : (
@@ -1296,13 +1296,13 @@ loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
 
                       <button
                         onClick={handleResetHwid}
-                        disabled={isResettingHwid || userKeyData.cooldownRemainingHours > 0 || (!userKeyData.hwid && !userKeyData.robloxId)}
+                        disabled={isResettingHwid || userKeyData.cooldownRemainingMinutes > 0 || (!userKeyData.hwid && !userKeyData.robloxId)}
                         className={`
                           w-full py-2.5 rounded-sm font-mono text-[9px] font-bold uppercase tracking-wider transition-all duration-200 border
                           ${
                             isResettingHwid
                               ? "bg-white/5 border-white/10 text-white/50 cursor-not-allowed"
-                              : userKeyData.cooldownRemainingHours > 0
+                              : userKeyData.cooldownRemainingMinutes > 0
                               ? "bg-white/[0.01] border-white/5 text-[#8A8990] cursor-not-allowed"
                               : (!userKeyData.hwid && !userKeyData.robloxId)
                               ? "bg-white/[0.01] border-white/5 text-[#8A8990] cursor-not-allowed"
@@ -1314,7 +1314,7 @@ loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
                       </button>
                       
                       <span className="font-mono text-[8px] text-[#8A8990] leading-relaxed text-center block">
-                        *Catatan: Reset HWID membatalkan kaitan hardware dan Roblox ID lama sehingga key dapat digunakan di PC/HP/executor lain. Batas reset 1x per 24 jam.
+                        *Catatan: Reset HWID membatalkan kaitan hardware dan Roblox ID lama sehingga key dapat digunakan di PC/HP/executor lain. Batas reset 1x per 10 menit.
                       </span>
                     </div>
                   </div>

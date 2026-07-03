@@ -14,7 +14,14 @@ import {
   ArrowLeft,
   Menu,
   X,
-  Gamepad
+  Gamepad,
+  Key,
+  Copy,
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Eye,
+  EyeOff
 } from "lucide-react"
 
 import GridLines from "../components/gridLines"
@@ -27,7 +34,7 @@ const OWNER_IDS = [
 ].filter(Boolean)
 
 export default function BotConsole() {
-  const [activeSection, setActiveSection] = useState("Dashboard")
+  const [activeSection, setActiveSection] = useState("My Key")
   const [isRestarting, setIsRestarting] = useState(false)
   const [botStatus, setBotStatus] = useState("Online")
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -36,6 +43,14 @@ export default function BotConsole() {
   const [userProfile, setUserProfile] = useState(null)
   const [isOwner, setIsOwner] = useState(false)
   const [hasAllowedRole, setHasAllowedRole] = useState(false)
+
+  // Key & HWID Portal State
+  const [userKeyData, setUserKeyData] = useState(null)
+  const [isLoadingKey, setIsLoadingKey] = useState(false)
+  const [keyError, setKeyError] = useState(null)
+  const [isResettingHwid, setIsResettingHwid] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [showFullKey, setShowFullKey] = useState(false)
 
   // Roblox Server Finder State
   const [robloxPlaceId, setRobloxPlaceId] = useState("")
@@ -226,10 +241,82 @@ export default function BotConsole() {
     setUserProfile(null)
     setIsOwner(false)
     setHasAllowedRole(false)
-    setActiveSection("Dashboard")
+    setActiveSection("My Key")
     showToast("Successfully logged out.", "info")
     addSystemLog("info", "User session terminated")
   }
+
+  const fetchUserKeyData = async (token) => {
+    if (!token) return
+    setIsLoadingKey(true)
+    setKeyError(null)
+    const statsUrl = import.meta.env.VITE_BOT_API_URL
+    const myKeyUrl = statsUrl ? statsUrl.replace("/api/stats", "/api/my-key") : null
+    if (!myKeyUrl) {
+      setKeyError("API URL not configured.")
+      setIsLoadingKey(false)
+      return
+    }
+
+    try {
+      const res = await fetch(`${myKeyUrl}?token=${token}`)
+      if (res.ok) {
+        const data = await res.json()
+        setUserKeyData(data)
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setKeyError(data.error || "Failed to load key details.")
+      }
+    } catch (e) {
+      console.error(e)
+      setKeyError("Failed to connect to verification API.")
+    } finally {
+      setIsLoadingKey(false)
+    }
+  }
+
+  const handleResetHwid = async () => {
+    const token = localStorage.getItem("discord_token")
+    if (!token) return
+    setIsResettingHwid(true)
+    const statsUrl = import.meta.env.VITE_BOT_API_URL
+    const resetUrl = statsUrl ? statsUrl.replace("/api/stats", "/api/reset-my-hwid") : null
+    if (!resetUrl) {
+      showToast("API URL not configured.", "error")
+      setIsResettingHwid(false)
+      return
+    }
+
+    try {
+      const res = await fetch(`${resetUrl}?token=${token}`, {
+        method: "POST"
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        showToast("HWID Reset Successful!", "success")
+        addSystemLog("info", `User reset their HWID and Roblox binding via web portal`)
+        // Refresh key data
+        fetchUserKeyData(token)
+      } else {
+        showToast(data.error || "Failed to reset HWID.", "error")
+      }
+    } catch (e) {
+      console.error(e)
+      showToast("Network error during reset.", "error")
+    } finally {
+      setIsResettingHwid(false)
+    }
+  }
+
+  useEffect(() => {
+    if (userProfile) {
+      const token = localStorage.getItem("discord_token")
+      fetchUserKeyData(token)
+    } else {
+      setUserKeyData(null)
+    }
+  }, [userProfile])
+
 
   const searchRobloxServers = async (placeId) => {
     if (!placeId.trim()) return
@@ -810,6 +897,7 @@ export default function BotConsole() {
           <nav>
             <ul className="flex flex-col gap-1.5">
               {[
+                { name: "My Key", icon: Key },
                 { name: "Dashboard", icon: LayoutDashboard },
                 { name: "Commands", icon: Terminal, badge: commandsList.length, badgeType: "gold" },
                 { name: "Game Servers", icon: Gamepad },
@@ -817,7 +905,10 @@ export default function BotConsole() {
                 { name: "Logs", icon: FileText, badge: systemLogs.filter(l => l.type === "warn").length + "!", badgeType: "red" },
                 { name: "Users", icon: Users },
                 { name: "Settings", icon: Settings },
-              ].filter(item => isOwner || (item.name !== "Users" && item.name !== "Settings")).map((item) => {
+              ].filter(item => {
+                if (item.name === "My Key") return true;
+                return isOwner || hasAllowedRole;
+              }).map((item) => {
                 const Icon = item.icon
                 const isActive = activeSection === item.name
                 return (
@@ -992,6 +1083,247 @@ export default function BotConsole() {
         {/* DYNAMIC DASHBOARD WORKSPACE (Independent scrolling) */}
         <div className="p-4 md:p-8 overflow-y-auto flex-1">
           
+          {/* VIEW: MY KEY & HWID RESET */}
+          {activeSection === "My Key" && (
+            <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+              
+              {/* Header Title */}
+              <div className="bg-[#16161C] border border-white/[0.06] p-6 rounded-md relative overflow-hidden backdrop-blur-md">
+                <div className="absolute top-0 right-0 p-8 opacity-5">
+                  <Key size={120} className="text-[#D4AF37]" />
+                </div>
+                <h3 className="text-[#D4AF37] font-semibold text-[16px] tracking-wide uppercase">🔑 Key & HWID Management</h3>
+                <p className="text-[#8A8990] text-[11px] mt-1 font-mono leading-relaxed">
+                  Kelola key lisensi LeonX Hub Anda, sinkronisasikan perangkat, dan lakukan reset Hardware ID (HWID) secara mandiri.
+                </p>
+              </div>
+
+              {!userProfile ? (
+                /* 1. NOT LOGGED IN STATE */
+                <div className="bg-[#16161C] border border-white/[0.06] p-8 rounded-md text-center flex flex-col items-center justify-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center text-[#5865F2]">
+                    <Key size={24} />
+                  </div>
+                  <div className="max-w-md">
+                    <h4 className="text-white text-[13px] font-bold font-mono">Akses Terbatas</h4>
+                    <p className="text-[#8A8990] text-[10px] font-mono mt-1.5 leading-relaxed">
+                      Anda perlu masuk menggunakan akun Discord terlebih dahulu untuk memuat data lisensi dan mereset binding perangkat (HWID).
+                    </p>
+                  </div>
+                  <button
+                    onClick={loginWithDiscord}
+                    className="px-6 py-2.5 bg-[#5865F2] hover:bg-[#4752C4] border border-[#5865F2]/20 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all duration-200"
+                  >
+                    Login with Discord
+                  </button>
+                </div>
+              ) : isLoadingKey ? (
+                /* 2. LOADING STATE */
+                <div className="bg-[#16161C] border border-white/[0.06] p-12 rounded-md flex flex-col items-center justify-center gap-3">
+                  <RefreshCw size={24} className="text-[#D4AF37] animate-spin" />
+                  <span className="font-mono text-[10px] text-[#8A8990] uppercase tracking-wider">Memuat data lisensi...</span>
+                </div>
+              ) : keyError ? (
+                /* 3. ERROR STATE */
+                <div className="bg-[#16161C] border border-red-500/20 p-6 rounded-md flex items-start gap-4">
+                  <div className="text-red-400 shrink-0 mt-0.5">
+                    <AlertCircle size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-red-400 text-[12px] font-bold font-mono">Gagal Memuat Lisensi</h4>
+                    <p className="text-[#8A8990] text-[10px] font-mono mt-1 leading-relaxed">{keyError}</p>
+                    <button
+                      onClick={() => fetchUserKeyData(localStorage.getItem("discord_token"))}
+                      className="mt-3 px-4 py-1.5 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-[#F0EFE8] font-mono text-[9px] uppercase tracking-wider rounded-sm transition-all"
+                    >
+                      Coba Lagi
+                    </button>
+                  </div>
+                </div>
+              ) : userKeyData && !userKeyData.hasKey ? (
+                /* 4. USER HAS NO KEY YET */
+                <div className="bg-[#16161C] border border-[#D4AF37]/20 p-6 rounded-md flex items-start gap-4">
+                  <div className="text-[#D4AF37] shrink-0 mt-0.5">
+                    <AlertCircle size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-[#D4AF37] text-[12px] font-bold font-mono">Lisensi Tidak Ditemukan</h4>
+                    <p className="text-[#8A8990] text-[10px] font-mono mt-1 leading-relaxed">
+                      {userKeyData.message || "Akun Discord Anda belum terdaftar memiliki key lisensi LeonX Hub."}
+                    </p>
+                    <div className="mt-4 p-3 bg-[#0A0A0C] border border-white/[0.03] rounded-sm">
+                      <span className="text-white text-[9px] font-mono uppercase tracking-wider block font-bold">Cara Mendapatkan Key:</span>
+                      <ol className="list-decimal list-inside text-[#8A8990] text-[9px] font-mono mt-2 space-y-1">
+                        <li>Pastikan Anda sudah bergabung di Server Discord LeonX.</li>
+                        <li>Verifikasi diri Anda di channel verifikasi.</li>
+                        <li>Gunakan slash command <code className="text-[#D4AF37] bg-white/[0.02] px-1 rounded">/script nama:LeonX Hub Loader</code> di server.</li>
+                        <li>Bot akan membuatkan key lisensi unik baru untuk Anda lewat DM.</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              ) : userKeyData ? (
+                /* 5. USER HAS KEY STATE */
+                <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6">
+                  
+                  {/* Left Column: Key Info & Actions */}
+                  <div className="flex flex-col gap-6">
+                    <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Key Lisensi Anda</span>
+                      
+                      <div className="relative">
+                        <input
+                          type={showFullKey ? "text" : "password"}
+                          readOnly
+                          value={userKeyData.key}
+                          className="w-full px-3 py-2.5 bg-[#0A0A0C] border border-white/10 text-white font-mono text-[11px] rounded-sm focus:outline-none tracking-widest pr-20"
+                        />
+                        <div className="absolute right-1.5 top-1.5 flex gap-1">
+                          <button
+                            onClick={() => setShowFullKey(!showFullKey)}
+                            className="p-1.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-[#8A8990] hover:text-[#F0EFE8] rounded-sm transition-all"
+                            title={showFullKey ? "Sembunyikan Key" : "Tampilkan Key"}
+                          >
+                            {showFullKey ? <EyeOff size={12} /> : <Eye size={12} />}
+                          </button>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(userKeyData.key)
+                              setCopied(true)
+                              showToast("Key copied to clipboard!", "success")
+                              setTimeout(() => setCopied(false), 2000)
+                            }}
+                            className="p-1.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-white/10 text-[#8A8990] hover:text-[#F0EFE8] rounded-sm transition-all"
+                            title="Salin Key"
+                          >
+                            {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-[#0A0A0C]/50 border border-white/[0.03] rounded-sm">
+                        <span className="text-[#8A8990] text-[9px] font-mono leading-relaxed block">
+                          📌 **Peringatan Keamanan**: Kunci ini mengidentifikasi akses premium Anda ke LeonX Hub di Roblox. 
+                          **JANGAN PERNAH** membagikan key ini kepada orang lain karena dapat menyebabkan akun/key Anda diblokir permanen.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Cara Penggunaan di Roblox</span>
+                      <div className="bg-[#0A0A0C] border border-white/10 p-3 rounded-sm relative">
+                        <pre className="text-[9px] font-mono text-cyan-400 overflow-x-auto whitespace-pre-wrap select-all leading-normal">
+{`_G.Key = "${userKeyData.key}"
+loadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`}
+                        </pre>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`_G.Key = "${userKeyData.key}"\nloadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`)
+                            showToast("Loader code copied!", "success")
+                          }}
+                          className="absolute right-2 top-2 p-1.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-[#8A8990] hover:text-white rounded-sm transition-all"
+                          title="Salin Loader"
+                        >
+                          <Copy size={11} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Binding Status & Reset Cooldown */}
+                  <div className="flex flex-col gap-6">
+                    <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Binding Status</span>
+                      
+                      <div className="flex flex-col gap-3 font-mono text-[10px]">
+                        <div className="flex justify-between py-2 border-b border-white/[0.03]">
+                          <span className="text-[#8A8990]">Roblox Account:</span>
+                          {userKeyData.robloxId ? (
+                            <a
+                              href={`https://www.roblox.com/users/${userKeyData.robloxId}/profile`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-cyan-400 hover:underline font-bold"
+                            >
+                              Roblox ID: {userKeyData.robloxId}
+                            </a>
+                          ) : (
+                            <span className="text-[#8A8990] italic font-bold">Not Bound</span>
+                          )}
+                        </div>
+
+                        <div className="flex justify-between py-2 border-b border-white/[0.03]">
+                          <span className="text-[#8A8990]">Hardware ID (HWID):</span>
+                          {userKeyData.hwid ? (
+                            <span className="text-[#F0EFE8] font-bold break-all max-w-[150px] text-right truncate" title={userKeyData.hwid}>
+                              {userKeyData.hwid}
+                            </span>
+                          ) : (
+                            <span className="text-[#8A8990] italic font-bold">Not Bound</span>
+                          )}
+                        </div>
+
+                        <div className="flex justify-between py-2 border-b border-white/[0.03]">
+                          <span className="text-[#8A8990]">Cooldown Status:</span>
+                          <span className="text-[#F0EFE8] font-bold">
+                            {userKeyData.cooldownRemainingHours > 0 ? `${userKeyData.cooldownRemainingHours} Hours Left` : "Ready"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Reset Hardware & Binding</span>
+                      
+                      {userKeyData.cooldownRemainingHours > 0 ? (
+                        <div className="p-3.5 bg-yellow-500/10 border border-yellow-500/20 rounded-sm flex items-start gap-2.5">
+                          <AlertCircle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+                          <div className="font-mono text-[9px] text-yellow-500/90 leading-relaxed">
+                            <span className="font-bold block">Reset Terkunci (Cooldown)</span>
+                            Anda baru saja mereset HWID atau Roblox ID Anda baru-baru ini. 
+                            Anda dapat melakukan reset perangkat kembali dalam <strong className="text-white bg-yellow-500/20 px-1 rounded">{userKeyData.cooldownRemainingHours} jam</strong>.
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3.5 bg-[#10B981]/10 border border-[#10B981]/20 rounded-sm flex items-start gap-2.5">
+                          <Check size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                          <div className="font-mono text-[9px] text-[#10B981]/90 leading-relaxed">
+                            <span className="font-bold block">Reset Tersedia</span>
+                            Anda tidak memiliki cooldown aktif. Anda dapat mereset HWID dan mengaitkan key ke perangkat/executor Roblox baru.
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={handleResetHwid}
+                        disabled={isResettingHwid || userKeyData.cooldownRemainingHours > 0 || (!userKeyData.hwid && !userKeyData.robloxId)}
+                        className={`
+                          w-full py-2.5 rounded-sm font-mono text-[9px] font-bold uppercase tracking-wider transition-all duration-200 border
+                          ${
+                            isResettingHwid
+                              ? "bg-white/5 border-white/10 text-white/50 cursor-not-allowed"
+                              : userKeyData.cooldownRemainingHours > 0
+                              ? "bg-white/[0.01] border-white/5 text-[#8A8990] cursor-not-allowed"
+                              : (!userKeyData.hwid && !userKeyData.robloxId)
+                              ? "bg-white/[0.01] border-white/5 text-[#8A8990] cursor-not-allowed"
+                              : "bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border-[#D4AF37]/20 hover:border-[#D4AF37]/30 text-[#D4AF37]"
+                          }
+                        `}
+                      >
+                        {isResettingHwid ? "Resetting HWID..." : "Reset HWID & Roblox ID"}
+                      </button>
+                      
+                      <span className="font-mono text-[8px] text-[#8A8990] leading-relaxed text-center block">
+                        *Catatan: Reset HWID membatalkan kaitan hardware dan Roblox ID lama sehingga key dapat digunakan di PC/HP/executor lain. Batas reset 1x per 24 jam.
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              ) : null}
+            </div>
+          )}
+
           {/* VIEW 1: DASHBOARD */}
           {activeSection === "Dashboard" && (
             <div className="flex flex-col gap-6 max-w-7xl mx-auto">

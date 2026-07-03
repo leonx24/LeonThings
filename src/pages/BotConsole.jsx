@@ -171,7 +171,7 @@ export default function BotConsole() {
         
         setUserProfile(user)
         
-        const guildId = import.meta.env.VITE_GUILD_ID || "1515259972322394920"
+        const guildId = import.meta.env.VITE_GUILD_ID || "1515261708531404920"
         const allowedRoleId = import.meta.env.VITE_ALLOWED_ROLE_ID || "1519667788883562506"
         
         if (OWNER_IDS.includes(user.id)) {
@@ -907,7 +907,10 @@ export default function BotConsole() {
                 { name: "Settings", icon: Settings },
               ].filter(item => {
                 if (item.name === "My Key") return true;
-                return isOwner || hasAllowedRole;
+                if (["Dashboard", "Commands", "Game Servers"].includes(item.name)) {
+                  return isOwner || hasAllowedRole;
+                }
+                return isOwner;
               }).map((item) => {
                 const Icon = item.icon
                 const isActive = activeSection === item.name

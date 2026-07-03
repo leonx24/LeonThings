@@ -1221,7 +1221,7 @@ loadstring(game:HttpGet("https://leonthings.my.id/loader.lua"))()`}
                         </pre>
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(`_G.Key = "${userKeyData.key}"\nloadstring(game:HttpGet("https://api.leonthings.my.id/loader.lua"))()`)
+                            navigator.clipboard.writeText(`_G.Key = "${userKeyData.key}"\nloadstring(game:HttpGet("https://leonthings.my.id/loader.lua"))()`)
                             showToast("Loader code copied!", "success")
                           }}
                           className="absolute right-2 top-2 p-1.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-[#8A8990] hover:text-white rounded-sm transition-all"

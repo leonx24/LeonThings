@@ -21,7 +21,8 @@ import {
   AlertCircle,
   RefreshCw,
   Eye,
-  EyeOff
+  EyeOff,
+  User
 } from "lucide-react"
 
 import GridLines from "../components/gridLines"
@@ -1237,19 +1238,44 @@ loadstring(game:HttpGet("https://leonthings.my.id/loader.lua"))()`}
                   <div className="flex flex-col gap-6">
                     <div className="bg-[#16161C] border border-white/[0.06] p-5 rounded-md flex flex-col gap-4">
                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#8A8990]">Binding Status</span>
-                      
-                      <div className="flex flex-col gap-3 font-mono text-[10px]">
-                        <div className="flex justify-between py-2 border-b border-white/[0.03]">
-                          <span className="text-[#8A8990]">Roblox Account:</span>
-                          {userKeyData.robloxId ? (
+
+                      {userKeyData.robloxId && (
+                        <div className="flex items-center gap-3.5 p-3 bg-[#0A0A0C] border border-white/5 rounded-sm mb-1">
+                          {userKeyData.robloxAvatarUrl ? (
+                            <img
+                              src={userKeyData.robloxAvatarUrl}
+                              alt="Roblox Avatar"
+                              className="w-11 h-11 rounded-full border border-cyan-500/30 object-cover bg-black/40 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-11 h-11 rounded-full border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
+                              <User size={16} className="text-[#8A8990]" />
+                            </div>
+                          )}
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <span className="text-[#F0EFE8] font-bold text-[11px] truncate leading-tight">
+                              {userKeyData.robloxDisplayName || "Roblox User"}
+                            </span>
+                            <span className="text-[#8A8990] text-[9px] truncate leading-none">
+                              @{userKeyData.robloxUsername || "unknown"}
+                            </span>
                             <a
                               href={`https://www.roblox.com/users/${userKeyData.robloxId}/profile`}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-cyan-400 hover:underline font-bold"
+                              className="text-cyan-400 hover:text-cyan-300 text-[8px] hover:underline flex items-center gap-0.5 mt-0.5 transition-all duration-150"
                             >
-                              Roblox ID: {userKeyData.robloxId}
+                              View Roblox Profile ↗
                             </a>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-col gap-3 font-mono text-[10px]">
+                        <div className="flex justify-between py-2 border-b border-white/[0.03]">
+                          <span className="text-[#8A8990]">Roblox ID:</span>
+                          {userKeyData.robloxId ? (
+                            <span className="text-[#F0EFE8] font-bold">{userKeyData.robloxId}</span>
                           ) : (
                             <span className="text-[#8A8990] italic font-bold">Not Bound</span>
                           )}

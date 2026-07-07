@@ -7,6 +7,7 @@ import Divider from "../components/divider"
 
 import About from "../components/about"
 import Works from "../components/work"
+import RobloxPlayground from "../components/RobloxPlayground"
 import Services from "../components/services"
 import Quote from "../components/quote"
 import Contact from "../components/contact"
@@ -69,6 +70,12 @@ export default function Home() {
       <About />
 
       <Works />
+
+      <Divider />
+
+      <RobloxPlayground />
+
+      <Divider />
 
       <Services />
 

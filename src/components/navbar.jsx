@@ -44,6 +44,11 @@ export default function Navbar() {
       isHash: true,
     },
     {
+      name: "Playground",
+      href: isHome ? "#playground" : "/#playground",
+      isHash: true,
+    },
+    {
       name: "Bot",
       href: "/bot",
       isHash: false,

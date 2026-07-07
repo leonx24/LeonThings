@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import GridLines from "../components/gridLines"
 import Navbar from "../components/navbar"
+import SEO from "../components/SEO"
 
 import { PixelHero } from "../components/ui/pixel-perfect-hero"
 import Divider from "../components/divider"
@@ -41,6 +42,11 @@ export default function Home() {
 
   return (
     <>
+      <SEO
+        title={null}
+        description="Creative developer building modern web experiences and scalable game systems. Specializing in React, Python, and Roblox development."
+        path="/"
+      />
       <CustomCursor />
       <Noise />
       <GridLines />
@@ -49,7 +55,7 @@ export default function Home() {
       <PixelHero
         word1="Creative"
         word2="Developer."
-        description="I develop responsive React web applications, write custom backend integrations, and engineer game systems in Roblox. Focused on making things that look clean and run fast."
+        description="I write code that runs fast, keep my interfaces minimal, and build neat software. Usually working with React, Luau, and Python. Currently engineering scripting clients and automation bots."
         primaryCta="Explore Design"
         primaryCtaMobile="Explore"
         secondaryCta="View GitHub"

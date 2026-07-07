@@ -86,8 +86,8 @@ export default function CustomCursor() {
           mix-blend-difference
         "
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
+          x: cursorX, // Instant alignment with mouse pointer (zero delay feel)
+          y: cursorY, // Instant alignment with mouse pointer (zero delay feel)
           translateX: "-50%",
           translateY: "-50%",
         }}

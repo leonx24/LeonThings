@@ -96,10 +96,13 @@ export default function RobloxPlayground() {
     setLogs((prev) => [...prev, { type, text, time }])
   }
 
-  // Auto-scroll terminal
+  // Auto-scroll terminal (only within the logs container, not the page)
   useEffect(() => {
     if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: "smooth" })
+      const container = terminalEndRef.current.parentElement
+      if (container) {
+        container.scrollTop = container.scrollHeight
+      }
     }
   }, [logs])
 
@@ -453,16 +456,37 @@ export default function RobloxPlayground() {
 
   // Syntactic highlights in text editor overlay
   const highlightCode = (rawCode) => {
-    return rawCode
-      .replace(/local\s/g, '<span class="text-pink-500">local </span>')
-      .replace(/function/g, '<span class="text-pink-500">function</span>')
-      .replace(/end/g, '<span class="text-pink-500">end</span>')
-      .replace(/for\s/g, '<span class="text-pink-500">for </span>')
-      .replace(/do\s/g, '<span class="text-pink-500">do </span>')
-      .replace(/print/g, '<span class="text-emerald-400">print</span>')
-      .replace(/(["'].*?["'])/g, '<span class="text-amber-300">$1</span>')
-      .replace(/(--.*?)$/gm, '<span class="text-white/30">$1</span>')
+    // 1. Extract strings to prevent keyword highlighting inside them
+    const strings = []
+    let tempCode = rawCode.replace(/(["'].*?["'])/g, (match) => {
+      strings.push(match)
+      return `__LUA_STR_${strings.length - 1}__`
+    })
+
+    // 2. Extract comments to prevent keyword highlighting inside comments
+    const comments = []
+    tempCode = tempCode.replace(/(--.*?)$/gm, (match) => {
+      comments.push(match)
+      return `__LUA_COMMENT_${comments.length - 1}__`
+    })
+
+    // 3. Highlight keywords
+    tempCode = tempCode
+      .replace(/\b(local|function|end|for|do|then|if|else|elseif|return)\b/g, '<span class="text-pink-500">$1</span>')
+      .replace(/\b(print)\b/g, '<span class="text-emerald-400">$1</span>')
       .replace(/(Instance\.new|game|workspace)/g, '<span class="text-sky-400">$1</span>')
+
+    // 4. Restore comments (with dark gray color)
+    tempCode = tempCode.replace(/__LUA_COMMENT_(\d+)__/g, (match, index) => {
+      return `<span class="text-white/30">${comments[parseInt(index)]}</span>`
+    })
+
+    // 5. Restore strings (with amber color)
+    tempCode = tempCode.replace(/__LUA_STR_(\d+)__/g, (match, index) => {
+      return `<span class="text-amber-300">${strings[parseInt(index)]}</span>`
+    })
+
+    return tempCode
   }
 
   return (
@@ -601,7 +625,7 @@ export default function RobloxPlayground() {
               </div>
 
               {/* Main Window Workspace Workspace split */}
-              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.06] h-[340px] md:h-[400px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.06] h-[380px] md:h-[450px]">
                 
                 {/* Editor Shell (Left) */}
                 <div className="flex flex-col h-full bg-[#0a0a0a]">
@@ -621,7 +645,7 @@ export default function RobloxPlayground() {
                   </div>
 
                   {/* Editor Code Area */}
-                  <div className="flex-1 relative font-mono text-[12px] p-4 overflow-hidden flex">
+                  <div className="flex-1 min-h-0 relative font-mono text-[12px] p-4 overflow-hidden flex">
                     {/* Line numbers gutter */}
                     <div className="text-white/20 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
                       {Array.from({ length: 15 }).map((_, i) => (

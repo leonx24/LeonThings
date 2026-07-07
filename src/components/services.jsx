@@ -66,30 +66,30 @@ export default function Services() {
             >
               <div
                 className="
+                  relative
                   h-full
-
                   bg-[#0f0f0f]
-
                   px-9
                   py-11
-
-                  transition-colors
+                  transition-all
                   duration-300
-
-                  hover:bg-white/[0.02]
+                  hover:bg-white/[0.012]
                   group
                 "
               >
+                {/* Micro-Siku Corner Accents */}
+                <div className="absolute top-0 left-0 w-3.5 h-px bg-white/10 group-hover:bg-white/30 transition-colors duration-300" />
+                <div className="absolute top-0 left-0 w-px h-3.5 bg-white/10 group-hover:bg-white/30 transition-colors duration-300" />
+                <div className="absolute bottom-0 right-0 w-3.5 h-px bg-white/10 group-hover:bg-white/30 transition-colors duration-300" />
+                <div className="absolute bottom-0 right-0 w-px h-3.5 bg-white/10 group-hover:bg-white/30 transition-colors duration-300" />
+
                 <div
                   className="
                     mb-9
-
                     font-mono
-
                     text-[10px]
                     tracking-[0.3em]
                     uppercase
-
                     text-white/25
                     group-hover:text-white/50
                     transition-colors
@@ -102,10 +102,8 @@ export default function Services() {
                 <h3
                   className="
                     font-serif
-
                     text-[26px]
                     leading-[1.18]
-
                     mb-5
                     text-white
                     group-hover:text-white/95
@@ -126,13 +124,36 @@ export default function Services() {
                   className="
                     text-[12px]
                     leading-[1.8]
-
                     text-white/50
                     font-light
                   "
                 >
                   {service.desc}
                 </p>
+
+                {/* Tech Stack Badges */}
+                {service.tech && (
+                  <div className="mt-8 flex flex-wrap gap-1.5">
+                    {service.tech.map((t) => (
+                      <span
+                        key={t}
+                        className="
+                          px-2 py-0.5
+                          border border-white/[0.04]
+                          bg-white/[0.005]
+                          group-hover:border-white/10
+                          group-hover:bg-white/[0.015]
+                          font-mono text-[8px] uppercase tracking-widest text-white/30
+                          group-hover:text-white/50
+                          transition-all duration-300
+                          rounded-sm
+                        "
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </Reveal>
           ))}

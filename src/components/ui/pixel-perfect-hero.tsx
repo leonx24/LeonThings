@@ -338,6 +338,14 @@ export function PixelHero({
 
   return (
     <div id="hero" className="relative w-full min-h-[100dvh] bg-[#0a0a0a] flex flex-col justify-between md:justify-center md:gap-6 py-8 md:py-0 px-2 sm:px-6 overflow-hidden select-none isolate">
+      {/* HUD Architectural Labels (Moved to bottom corners to avoid navbar clash) */}
+      <div className={cn("hidden lg:block absolute bottom-12 left-12 z-10 font-mono text-[9px] uppercase tracking-[0.25em] text-white/20 select-none transition-all duration-1000 transform", isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4")} style={{ transitionDelay: "600ms" }}>
+        LOC // 06.2088° S, 106.8456° E
+      </div>
+      <div className={cn("hidden lg:block absolute bottom-12 right-12 z-10 font-mono text-[9px] uppercase tracking-[0.25em] text-white/20 select-none transition-all duration-1000 transform", isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4")} style={{ transitionDelay: "600ms" }}>
+        SYS // RAILWAY HOST SYNCED
+      </div>
+
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0%); }
@@ -382,15 +390,19 @@ export function PixelHero({
           {description}
         </p>
 
-        <div className="block md:hidden w-full mt-14 pointer-events-auto">
-          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/35 mb-5">
+        <div className="block md:hidden w-full mt-10 pointer-events-auto">
+          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/25 mb-4.5">
             Core Technology Stack
           </div>
-          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
-            <div className="flex w-max gap-12 py-1 animate-marquee">
-              <div className="flex gap-12 items-center">{BRAND_LOGOS.map((Logo, i) => <Logo key={i} />)}</div>
-              <div className="flex gap-12 items-center" aria-hidden="true">{BRAND_LOGOS.map((Logo, i) => <Logo key={`c-${i}`} />)}</div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 max-w-xs mx-auto">
+            {BRAND_LOGOS.map((Logo, i) => {
+              const LogoComponent = Logo;
+              return (
+                <div key={i} className="flex-shrink-0 transition-opacity duration-300 hover:opacity-100">
+                  <LogoComponent />
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -423,19 +435,23 @@ export function PixelHero({
         </a>
       </div>
 
-      {/* Desktop-only Marquee Block */}
+      {/* Desktop-only Static Tech Stack Block */}
       <div
-        className={cn("hidden md:flex absolute bottom-8 left-0 right-0 w-full z-10 pointer-events-auto flex-col items-center justify-center gap-4 transition-all duration-1000 transform order-3 md:order-4", isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8")}
+        className={cn("hidden md:flex absolute bottom-12 left-0 right-0 w-full z-10 pointer-events-auto flex-col items-center justify-center gap-4.5 transition-all duration-1000 transform order-3 md:order-4", isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8")}
         style={{ transitionDelay: "600ms" }}
       >
-        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/35 select-none">
+        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/25 select-none">
           Core Technology Stack
         </span>
-        <div className="relative w-full max-w-5xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
-          <div className="flex w-max gap-16 py-3 animate-marquee">
-            <div className="flex gap-16 items-center">{BRAND_LOGOS.map((Logo, i) => <Logo key={i} />)}</div>
-            <div className="flex gap-16 items-center" aria-hidden="true">{BRAND_LOGOS.map((Logo, i) => <Logo key={`c-${i}`} />)}</div>
-          </div>
+        <div className="flex items-center justify-center gap-14 border-t border-b border-white/[0.04] py-4.5 w-full max-w-2xl px-4">
+          {BRAND_LOGOS.map((Logo, i) => {
+            const LogoComponent = Logo;
+            return (
+              <div key={i} className="group transition-transform duration-300 hover:-translate-y-0.5">
+                <LogoComponent />
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

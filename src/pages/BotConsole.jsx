@@ -28,6 +28,7 @@ import {
 import GridLines from "../components/gridLines"
 import Noise from "../components/noise"
 import CustomCursor from "../components/CustomCursor"
+import SEO from "../components/SEO"
 
 const OWNER_IDS = [
   import.meta.env.VITE_OWNER_ID,
@@ -751,6 +752,11 @@ export default function BotConsole() {
 
   return (
     <main className="bg-[#0A0A0C] text-[#F0EFE8] min-h-screen md:h-screen w-full md:w-screen overflow-y-auto md:overflow-hidden flex flex-col md:flex-row font-sans antialiased selection:bg-[#D4AF37]/35 selection:text-white relative">
+      <SEO
+        title="Bot Dashboard & Verification Portal"
+        description="Verify your user account key, bind HWID, locate Roblox servers, manage server blacklists, and control Discord Bot configurations."
+        path="/bot"
+      />
       <CustomCursor />
       <GridLines />
       <Noise />

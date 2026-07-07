@@ -1141,11 +1141,11 @@ export default function BotConsole() {
                     <div className="bg-black/60 border border-white/[0.06] rounded-sm p-3.5 font-mono text-[9px] text-white/40 mb-5 leading-relaxed space-y-1">
                       <div className="flex justify-between border-b border-white/[0.03] pb-1">
                         <span className="text-white/60">Windows</span>
-                        <span className="text-[#4ADE80]">Wave, Synapse Z, Solara</span>
+                        <span className="text-[#4ADE80]">Madium, Real, Velocity, Wave, Synapse Z</span>
                       </div>
                       <div className="flex justify-between border-b border-white/[0.03] py-1">
                         <span className="text-white/60">Android</span>
-                        <span className="text-[#4ADE80]">Delta Client, Hydrogen, Codex</span>
+                        <span className="text-[#4ADE80]">Delta, Vega-x, Codex</span>
                       </div>
                       <div className="flex justify-between pt-1">
                         <span className="text-white/60">macOS</span>
@@ -1238,15 +1238,41 @@ export default function BotConsole() {
                       </button>
                       <button
                         onClick={() => {
-                          setUserProfile({ username: "Guest#1337", id: "000000000000000000", avatar: null })
+                          setUserProfile({ username: "OwnerGuest#0001", id: "123456789012345678", avatar: null })
                           setHasAllowedRole(true)
                           setIsOwner(true)
-                          showToast("Demonstration session loaded as Administrator.", "success")
-                          addSystemLog("info", "Guest demo session initialized.")
+                          setUserKeyData({
+                            hasKey: true,
+                            key: "LeonX-OWNER-MOCK-KEY-7777",
+                            hwid: "MOCK-HWID-UUID-8888-9999",
+                            resetsLeft: 5,
+                            message: "Owner account credentials loaded."
+                          })
+                          showToast("Demonstration loaded in Owner Mode (Admin).", "success")
+                          addSystemLog("info", "Owner demo session initialized.")
                         }}
-                        className="px-6 py-2.5 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all cursor-hover text-center"
+                        className="px-5 py-2.5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 text-white font-mono text-[9px] font-bold uppercase tracking-wider rounded-sm transition-all cursor-hover text-center"
                       >
-                        Demo Console
+                        Demo (Owner)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setUserProfile({ username: "BuyerGuest#7890", id: "987654321098765432", avatar: null })
+                          setHasAllowedRole(false)
+                          setIsOwner(false)
+                          setUserKeyData({
+                            hasKey: true,
+                            key: "LeonX-BUYER-KEY-1337-XXXX",
+                            hwid: "MOCK-HWID-PC-BND-4444",
+                            resetsLeft: 2,
+                            message: "Standard whitelist buyer account loaded."
+                          })
+                          showToast("Demonstration loaded in Buyer Mode (User).", "success")
+                          addSystemLog("info", "Buyer/User demo session initialized.")
+                        }}
+                        className="px-5 py-2.5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 text-white font-mono text-[9px] font-bold uppercase tracking-wider rounded-sm transition-all cursor-hover text-center"
+                      >
+                        Demo (User)
                       </button>
                     </div>
                   </>

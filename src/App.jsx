@@ -11,13 +11,22 @@ import PageTransition from "./components/PageTransition"
 
 export default function App() {
   const [preloaderDone, setPreloaderDone] = useState(() => {
-    // Check if preloader has already been shown in this browser session
-    return sessionStorage.getItem("preloader_seen") === "true"
+    // Check if preloader has already been shown in this browser session (wrapped in try-catch for mobile private modes)
+    try {
+      return sessionStorage.getItem("preloader_seen") === "true"
+    } catch (e) {
+      console.warn("sessionStorage is not accessible:", e)
+      return false
+    }
   })
   const location = useLocation()
 
   const handlePreloaderComplete = () => {
-    sessionStorage.setItem("preloader_seen", "true")
+    try {
+      sessionStorage.setItem("preloader_seen", "true")
+    } catch (e) {
+      console.warn("sessionStorage is not accessible:", e)
+    }
     setPreloaderDone(true)
   }
 

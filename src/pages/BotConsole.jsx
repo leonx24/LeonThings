@@ -34,6 +34,25 @@ import Noise from "../components/noise"
 import CustomCursor from "../components/CustomCursor"
 import SEO from "../components/SEO"
 
+// Safe localStorage wrapper for private mobile browsers
+const localStorage = (() => {
+  try {
+    const testKey = "__storage_test__"
+    window.localStorage.setItem(testKey, testKey)
+    window.localStorage.removeItem(testKey)
+    return window.localStorage
+  } catch (e) {
+    console.warn("localStorage is blocked or disabled. Using memory fallback.")
+    const memStore = {}
+    return {
+      getItem: (key) => memStore[key] || null,
+      setItem: (key, value) => { memStore[key] = String(value) },
+      removeItem: (key) => { delete memStore[key] },
+      clear: () => { for (const k in memStore) delete memStore[k] }
+    }
+  }
+})()
+
 const OWNER_IDS = [
   import.meta.env.VITE_OWNER_ID,
   "1464209826010763463" // Default fallback owner ID

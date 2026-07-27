@@ -4,7 +4,6 @@ import { AnimatePresence } from "framer-motion"
 
 import Home from "./pages/home"
 import ProjectDetail from "./pages/ProjectDetail"
-import BotConsole from "./pages/BotConsole"
 import NotFound from "./pages/NotFound"
 import Preloader from "./components/Preloader"
 import PageTransition from "./components/PageTransition"
@@ -43,7 +42,6 @@ export default function App() {
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/project/:slug" element={<ProjectDetail />} />
-            <Route path="/bot" element={<BotConsole />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PageTransition>

@@ -60,7 +60,7 @@ print("Leon X Hook Environment Initialized.")`
       { step: "01", label: "Discord Client Payload", desc: "User triggers application slash commands or dashboard verification buttons." },
       { step: "02", label: "Railway Gateway Server", desc: "Node.js webhook handler receiving secure API events from the Discord Gateway." },
       { step: "03", label: "DB Transaction WAL", desc: "SQLite WAL transactional engine validating database queries for whitelists & logging." },
-      { step: "04", label: "API Sync Console", desc: "Real-time SSE event synchronizer updating the web BotConsole status dashboard." }
+      { step: "04", label: "API Sync Console", desc: "Real-time SSE event synchronizer updating the web status dashboard." }
     ],
     snippet: {
       language: "typescript",

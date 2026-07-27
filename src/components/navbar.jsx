@@ -49,11 +49,6 @@ export default function Navbar() {
       isHash: true,
     },
     {
-      name: "Bot",
-      href: "/bot",
-      isHash: false,
-    },
-    {
       name: "Services",
       href: isHome ? "#services" : "/#services",
       isHash: true,
@@ -131,7 +126,7 @@ export default function Navbar() {
           "
         >
           {links.map((link) => {
-            const isRouterLink = !link.isHash || !isHome
+            const isRouterLink = !link.isExternal && (!link.isHash || !isHome)
             return (
               <li key={link.name}>
                 {isRouterLink ? (
@@ -240,7 +235,7 @@ export default function Navbar() {
       >
         <div className="bg-black/95 backdrop-blur-xl">
           {links.map((link) => {
-            const isRouterLink = !link.isHash || !isHome
+            const isRouterLink = !link.isExternal && (!link.isHash || !isHome)
             return isRouterLink ? (
               <Link
                 key={link.name}

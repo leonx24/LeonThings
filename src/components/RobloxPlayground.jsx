@@ -620,7 +620,7 @@ export default function RobloxPlayground() {
                     STABLE
                   </span>
                   <span className="text-white/20">|</span>
-                  <span className="text-white/35">PORT: 5173</span>
+                  <span className="text-zinc-400">PORT: 5173</span>
                 </div>
               </div>
 
@@ -632,7 +632,7 @@ export default function RobloxPlayground() {
                   
                   {/* Editor Header controls */}
                   <div className="px-4 py-2 border-b border-white/[0.06] flex items-center justify-between bg-black/30">
-                    <span className="font-mono text-[10px] text-white/45">Source Code Editor</span>
+                    <span className="font-mono text-[10px] text-zinc-400">Source Code Editor</span>
                     <div className="flex gap-2">
                       <button
                         onClick={handleResetEnvironment}
@@ -648,7 +648,7 @@ export default function RobloxPlayground() {
                   {/* Editor Code Area */}
                   <div className="flex-1 min-h-0 relative font-mono text-[12px] p-4 overflow-hidden flex">
                     {/* Line numbers gutter */}
-                    <div className="text-white/20 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
+                    <div className="text-zinc-600 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <span key={i}>{(i + 1).toString().padStart(2, "0")}</span>
                       ))}
@@ -758,8 +758,8 @@ export default function RobloxPlayground() {
                   
                   {/* Viewport Header */}
                   <div className="px-4 py-2 border-b border-white/[0.06] flex items-center justify-between bg-black/30">
-                    <span className="font-mono text-[10px] text-white/45">Roblox Workspace Viewport</span>
-                    <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest flex items-center gap-1">
+                    <span className="font-mono text-[10px] text-zinc-400">Roblox Workspace Viewport</span>
+                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                       <Sparkles size={8} className="text-white/40 animate-pulse" />
                       3D Engine
                     </span>
@@ -793,7 +793,7 @@ export default function RobloxPlayground() {
                       select-none
                       pointer-events-none
                     ">
-                      <div className="text-white/35 uppercase text-[7px] tracking-wider mb-1 border-b border-white/[0.05] pb-0.5">
+                      <div className="text-zinc-400 uppercase text-[7px] tracking-wider mb-1 border-b border-white/[0.05] pb-0.5">
                         Players
                       </div>
                       <div className="flex justify-between items-center text-white/80">
@@ -828,13 +828,13 @@ export default function RobloxPlayground() {
                       select-none
                     ">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-white/35">Gravity:</span>
+                        <span className="text-zinc-400">Gravity:</span>
                         <span className="text-white font-medium">
                           {(physicsParamsRef.current.gravity / 5).toFixed(2)}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-white/35">Wind:</span>
+                        <span className="text-zinc-400">Wind:</span>
                         <span className="text-white font-medium">
                           {physicsParamsRef.current.wind.toFixed(1)}
                         </span>
@@ -861,10 +861,10 @@ export default function RobloxPlayground() {
                         select-none
                       ">
                         <HelpCircle className="text-white/10 mb-3" size={28} />
-                        <div className="font-mono text-[11px] text-white/45 uppercase tracking-widest mb-1.5">
+                        <div className="font-mono text-[11px] text-zinc-400 uppercase tracking-widest mb-1.5">
                           Viewport Empty
                         </div>
-                        <div className="text-[10px] text-white/30 max-w-[200px] leading-relaxed">
+                        <div className="text-[10px] text-zinc-500 max-w-[200px] leading-relaxed">
                           Run the <code>spawner.lua</code> script or click Execute to generate physical bodies.
                         </div>
                       </div>
@@ -893,7 +893,7 @@ export default function RobloxPlayground() {
                   gap-2 
                   font-mono 
                   text-[9px] 
-                  text-white/45
+                  text-zinc-400
                 ">
                   <Terminal size={10} />
                   Output Logs
@@ -927,7 +927,7 @@ export default function RobloxPlayground() {
 
                     return (
                       <div key={i} className="flex items-start gap-2.5 leading-relaxed">
-                        <span className="text-white/20 select-none text-[10px]">{log.time}</span>
+                        <span className="text-zinc-600 select-none text-[10px]">{log.time}</span>
                         <span className={`text-[9px] tracking-wider uppercase font-semibold ${typeColor}`}>
                           [{label}]
                         </span>

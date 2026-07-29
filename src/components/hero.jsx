@@ -19,7 +19,7 @@ export default function Hero() {
           uppercase
           tracking-[0.22em]
           text-[11px]
-          text-white/35
+          text-zinc-400
         "
         initial={{
           opacity: 0,
@@ -106,7 +106,7 @@ export default function Hero() {
             uppercase
             tracking-[0.2em]
             text-[10px]
-            text-white/35
+            text-zinc-400
           "
         >
           <span

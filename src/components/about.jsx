@@ -57,7 +57,7 @@ export default function About() {
               tracking-[0.32em]
               text-[10px]
 
-              text-white/35
+              text-zinc-400
             "
           >
             <span className="w-7 h-px bg-white/35" />
@@ -129,7 +129,7 @@ export default function About() {
                 <div className="font-serif text-[clamp(24px,2.5vw,36px)] leading-none text-white mb-2 group-hover:translate-x-1 transition-transform duration-300">
                   {stat.value}
                 </div>
-                <div className="font-mono text-[9px] uppercase tracking-wider text-white/35 leading-relaxed whitespace-pre-line">
+                <div className="font-mono text-[9px] uppercase tracking-wider text-zinc-400 leading-relaxed whitespace-pre-line">
                   {stat.label}
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function About() {
             <div className="flex items-center gap-3">
               <MapPin size={13} className="text-white/20 flex-shrink-0" />
               <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-white/35">Location & Time</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-zinc-400">Location & Time</span>
                 <span className="text-[11px] font-mono text-white/70">
                   Jakarta, ID · <span className="text-white font-medium">{currentTime}</span>
                 </span>
@@ -205,7 +205,7 @@ export default function About() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-white/35">Status</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-zinc-400">Status</span>
                 <span className="text-[11px] font-mono text-white/80">Refining Leon X Client</span>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function About() {
             <div className="flex items-center gap-3">
               <Radio size={13} className="text-white/20 flex-shrink-0" />
               <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-white/35">On Repeat</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-zinc-400">On Repeat</span>
                 <div className="flex items-center gap-2">
                   {/* Minimal Equalizer Animation */}
                   <div className="flex items-end gap-[1.5px] h-2.5 w-3 pb-[1px] flex-shrink-0">

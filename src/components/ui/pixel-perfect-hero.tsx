@@ -12,7 +12,7 @@ import { cn } from "../../lib/utils";
 const BRAND_LOGOS = [
   // React
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg className="h-[18px] sm:h-[22px] w-auto fill-cyan-400/80" viewBox="-11.5 -10.23174 23 20.46348" xmlns="http://www.w3.org/2000/svg">
         <circle cx="0" cy="0" r="2.05" fill="currentColor"/>
         <g stroke="currentColor" strokeWidth="1" fill="none">
@@ -26,7 +26,7 @@ const BRAND_LOGOS = [
   ),
   // Python
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg className="h-[18px] sm:h-[22px] w-auto fill-current" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
         <path d="M55 0C24.6 0 24.6 13.2 24.6 13.2L24.7 26.8H55.4V31.1H12.3C12.3 31.1 0 31.1 0 55.7C0 80.3 10.8 80 10.8 80H22.5V63.6C22.5 40.5 41 40 41 40H69V26.8C69 26.8 69.5 0 55 0ZM85.4 30C85.4 30 73.7 30 73.7 46.4V62.8H43V67.1H86.2C86.2 67.1 98.5 67.1 98.5 42.5C98.5 17.9 87.7 18.2 87.7 18.2H76V34.6C76 57.7 57.5 58.2 57.5 58.2H29.5V71.4C29.5 71.4 29 98.2 43.5 98.2C58 98.2 58 85 58 85V71.4H27.3L27.2 67.1H85.4V30ZM42.6 11.4C45.3 11.4 47.4 13.5 47.4 16.1C47.4 18.7 45.3 20.8 42.6 20.8C39.9 20.8 37.8 18.7 37.8 16.1C37.8 13.5 39.9 11.4 42.6 11.4ZM57.4 86.8C54.7 86.8 52.6 84.7 52.6 82.1C52.6 79.5 54.7 77.4 57.4 77.4C60.1 77.4 62.2 79.5 62.2 82.1C62.2 84.7 60.1 86.8 57.4 86.8Z" />
       </svg>
@@ -35,7 +35,7 @@ const BRAND_LOGOS = [
   ),
   // Tailwind CSS
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg
         className="h-[18px] sm:h-[22px] w-auto select-none"
         xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const BRAND_LOGOS = [
   ),
   // Framer Motion
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg
         viewBox="0 0 14 21"
         role="presentation"
@@ -67,7 +67,7 @@ const BRAND_LOGOS = [
   ),
   // Vercel
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg className="h-[14px] sm:h-[18px] w-auto fill-current" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
         <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
       </svg>
@@ -76,7 +76,7 @@ const BRAND_LOGOS = [
   ),
   // Roblox
   () => (
-    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-white/35 hover:text-white transition-opacity duration-300">
+    <div className="flex items-center justify-start font-mono text-[10px] uppercase tracking-wider gap-2.5 text-zinc-400 hover:text-white transition-opacity duration-300">
       <svg className="h-[16px] sm:h-[20px] w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.38 0L0 20.08L18.62 24L24 3.92L5.38 0ZM9.68 15.05L7.75 7.91L14.89 5.98L16.82 13.12L9.68 15.05Z" />
       </svg>

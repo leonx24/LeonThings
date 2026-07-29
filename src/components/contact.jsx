@@ -106,7 +106,7 @@ export default function Contact() {
                   tracking-[0.32em]
                   text-[10px]
 
-                  text-white/35
+                  text-zinc-400
                 "
               >
                 <span className="w-7 h-px bg-white/35" />
@@ -174,7 +174,7 @@ export default function Contact() {
                           tracking-[0.28em]
                           text-[9px]
 
-                          text-white/35
+                          text-zinc-400
                         "
                       >
                         {item.label}
@@ -196,7 +196,7 @@ export default function Contact() {
 
                     <span
                       className="
-                        text-white/35
+                        text-zinc-400
 
                         transition-all
                         duration-500

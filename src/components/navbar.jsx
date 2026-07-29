@@ -255,7 +255,7 @@ export default function Navbar() {
                   uppercase
                   tracking-[0.18em]
 
-                  text-white/35
+                  text-zinc-400
 
                   transition-colors
                   duration-300
@@ -282,7 +282,7 @@ export default function Navbar() {
                   uppercase
                   tracking-[0.18em]
 
-                  text-white/35
+                  text-zinc-400
 
                   transition-colors
                   duration-300

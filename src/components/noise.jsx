@@ -1,3 +1,5 @@
+import noiseImg from "../assets/images/noise.png"
+
 export default function Noise() {
   return (
     <div
@@ -12,7 +14,7 @@ export default function Noise() {
         opacity-[0.015]
       "
       style={{
-        backgroundImage: "url('./assets/noise.png')",
+        backgroundImage: `url('${noiseImg}')`,
         backgroundRepeat: "repeat",
 
       }}

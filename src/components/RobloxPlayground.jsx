@@ -648,7 +648,7 @@ export default function RobloxPlayground() {
                   {/* Editor Code Area */}
                   <div className="flex-1 min-h-0 relative font-mono text-[12px] p-4 overflow-hidden flex">
                     {/* Line numbers gutter */}
-                    <div className="text-zinc-500 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
+                    <div className="text-zinc-400 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <span key={i}>{(i + 1).toString().padStart(2, "0")}</span>
                       ))}

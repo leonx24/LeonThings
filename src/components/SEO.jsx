@@ -2,9 +2,9 @@ import { Helmet } from "react-helmet"
 
 const defaults = {
   siteName: "Leon — Creative Developer",
-  siteUrl: "https://leonthings.com",
+  siteUrl: "https://leonthings.my.id",
   description: "Creative developer building modern web experiences and scalable game systems. Specializing in React, Python, and Roblox development.",
-  ogImage: "https://leonthings.com/og-image.png",
+  ogImage: "https://leonthings.my.id/og-image.png",
 }
 
 export default function SEO({

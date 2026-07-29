@@ -230,7 +230,7 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Name
@@ -283,7 +283,7 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Email
@@ -336,7 +336,7 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Message
@@ -351,6 +351,7 @@ export default function Contact() {
                         key={tag.label}
                         type="button"
                         onClick={() => handleTagClick(tag)}
+                        aria-label={`Select ${tag.label} topic`}
                         className={`
                           px-3 
                           py-1.5 

@@ -135,7 +135,7 @@ export default function Navbar() {
                     className="
                       relative
 
-                      text-white/35
+                      text-zinc-400
 
                       transition-all
                       duration-500
@@ -167,7 +167,7 @@ export default function Navbar() {
                     className="
                       relative
 
-                      text-white/35
+                      text-zinc-400
 
                       transition-all
                       duration-500
@@ -201,6 +201,8 @@ export default function Navbar() {
 
         <button
           onClick={() => setOpen(!open)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={open}
           className="
             md:hidden
 

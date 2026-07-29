@@ -637,6 +637,7 @@ export default function RobloxPlayground() {
                       <button
                         onClick={handleResetEnvironment}
                         title="Reset Environment variables"
+                        aria-label="Reset Environment"
                         className="p-1 rounded text-white/40 hover:text-white transition-colors cursor-hover hover:bg-white/[0.05]"
                       >
                         <RotateCcw size={12} />
@@ -674,6 +675,7 @@ export default function RobloxPlayground() {
                         ref={codeEditorRef}
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
+                        aria-label="Lua Source Code Editor"
                         spellCheck="false"
                         className="
                           absolute 
@@ -699,6 +701,7 @@ export default function RobloxPlayground() {
                   <div className="p-3 border-t border-white/[0.06] flex items-center justify-between gap-3 bg-black/40">
                     <button
                       onClick={handleClearWorkspace}
+                      aria-label="Clean Workspace"
                       className="
                         px-3.5 
                         py-1.5 
@@ -724,6 +727,7 @@ export default function RobloxPlayground() {
 
                     <button
                       onClick={handleExecute}
+                      aria-label="Execute Lua Script"
                       className="
                         px-5 
                         py-1.5 

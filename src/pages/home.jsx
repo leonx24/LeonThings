@@ -52,42 +52,44 @@ export default function Home() {
       <GridLines />
       <Navbar />
 
-      <PixelHero
-        word1="Creative"
-        word2="Developer."
-        description="I write code that runs fast, keep my interfaces minimal, and build neat software. Usually working with React, Luau, and Python. Currently engineering scripting clients and automation bots."
-        primaryCta="Explore Design"
-        primaryCtaMobile="Explore"
-        secondaryCta="View GitHub"
-        secondaryCtaMobile="GitHub"
-        onPrimaryClick={() => {
-          if (window.lenis) {
-            window.lenis.scrollTo("#works")
-          } else {
-            const el = document.getElementById("works")
-            if (el) el.scrollIntoView({ behavior: "smooth" })
-          }
-        }}
-        githubUrl="https://github.com/leonx24"
-      />
+      <main id="main-content">
+        <PixelHero
+          word1="Creative"
+          word2="Developer."
+          description="I write code that runs fast, keep my interfaces minimal, and build neat software. Usually working with React, Luau, and Python. Currently engineering scripting clients and automation bots."
+          primaryCta="Explore Design"
+          primaryCtaMobile="Explore"
+          secondaryCta="View GitHub"
+          secondaryCtaMobile="GitHub"
+          onPrimaryClick={() => {
+            if (window.lenis) {
+              window.lenis.scrollTo("#works")
+            } else {
+              const el = document.getElementById("works")
+              if (el) el.scrollIntoView({ behavior: "smooth" })
+            }
+          }}
+          githubUrl="https://github.com/leonx24"
+        />
 
-      <Divider />
+        <Divider />
 
-      <About />
+        <About />
 
-      <Works />
+        <Works />
 
-      <Divider />
+        <Divider />
 
-      <RobloxPlayground />
+        <RobloxPlayground />
 
-      <Divider />
+        <Divider />
 
-      <Services />
+        <Services />
 
-      <Quote />
+        <Quote />
 
-      <Contact />
+        <Contact />
+      </main>
 
       <Footer />
     </>

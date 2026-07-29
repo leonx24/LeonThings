@@ -34,7 +34,7 @@ export default function Footer() {
             tracking-[0.18em]
             text-[10px]
 
-            text-white/35
+            text-zinc-400
           "
         >
           © 2026 LeonThings
@@ -42,6 +42,7 @@ export default function Footer() {
 
         <a
           href="#hero"
+          aria-label="Back to top"
           className="
             font-mono
 
@@ -49,7 +50,7 @@ export default function Footer() {
             tracking-[0.18em]
             text-[10px]
 
-            text-white/35
+            text-zinc-400
 
             transition-colors
             duration-300

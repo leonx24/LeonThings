@@ -1,0 +1,21 @@
+# Leon — Creative Developer
+
+> Creative developer building modern web experiences, interactive tools, and scalable game systems. Specializing in React, Tailwind CSS, Python, Luau, and Roblox development.
+
+## About
+Leon is a software engineer and creative developer focused on high-performance web applications, clean minimal user interfaces, and automated scripting clients.
+
+## Key Projects & Highlights
+- **Roblox Playground**: Interactive in-browser Luau execution environment and physics simulator sandbox.
+- **Discord Automation & Bots**: Custom 24/7 Rich Presence and webhook automation clients built with TypeScript/Node.js.
+- **Web Applications**: Sleek, accessible React & Vite web experiences.
+
+## Technical Skills
+- **Frontend**: React, JavaScript (ESNext), HTML5, CSS3, Tailwind CSS, Framer Motion, Vite
+- **Backend & Scripting**: Python, Node.js, TypeScript, Luau (Roblox API), REST APIs
+- **Tools & Utilities**: Git, Linux, EmailJS, Physics Simulation
+
+## Links & Contact
+- **Website**: https://leonthings.my.id
+- **GitHub**: https://github.com/leonx24
+- **Email**: mailto:affavanleon@gmail.com

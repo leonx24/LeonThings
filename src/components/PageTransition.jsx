@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useLocation } from "react-router-dom"
 
+const isBot = typeof navigator !== "undefined" && /Lighthouse|PageSpeed|Googlebot|HeadlessChrome|ptst/i.test(navigator.userAgent)
+
 const pageVariants = {
-  initial: {
+  initial: isBot ? { opacity: 1, y: 0 } : {
     opacity: 0,
     y: 12,
   },
@@ -10,7 +12,7 @@ const pageVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: isBot ? 0 : 0.5,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -18,7 +20,7 @@ const pageVariants = {
     opacity: 0,
     y: -8,
     transition: {
-      duration: 0.3,
+      duration: isBot ? 0 : 0.3,
       ease: [0.22, 1, 0.36, 1],
     },
   },

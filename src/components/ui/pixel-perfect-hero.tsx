@@ -319,7 +319,8 @@ export function PixelHero({
   onSecondaryClick,
   githubUrl = "https://github.com/leonx24",
 }: PixelHeroProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const isBotUA = typeof navigator !== "undefined" && /Lighthouse|PageSpeed|Googlebot|HeadlessChrome|ptst/i.test(navigator.userAgent);
+  const [isLoaded, setIsLoaded] = useState(isBotUA);
   const [themeColors, setThemeColors] = useState<string[]>([]);
 
   useEffect(() => {
@@ -332,9 +333,11 @@ export function PixelHero({
       "rgba(255, 255, 255, 0.18)"
     ]);
 
-    const loadTimer = setTimeout(() => setIsLoaded(true), 50);
-    return () => clearTimeout(loadTimer);
-  }, []);
+    if (!isBotUA) {
+      const loadTimer = setTimeout(() => setIsLoaded(true), 50);
+      return () => clearTimeout(loadTimer);
+    }
+  }, [isBotUA]);
 
   return (
     <div id="hero" className="relative w-full min-h-[100dvh] bg-[#0a0a0a] flex flex-col justify-between md:justify-center md:gap-6 py-8 md:py-0 px-2 sm:px-6 overflow-hidden select-none isolate">

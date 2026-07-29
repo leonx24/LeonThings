@@ -648,7 +648,7 @@ export default function RobloxPlayground() {
                   {/* Editor Code Area */}
                   <div className="flex-1 min-h-0 relative font-mono text-[12px] p-4 overflow-hidden flex">
                     {/* Line numbers gutter */}
-                    <div className="text-zinc-600 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
+                    <div className="text-zinc-500 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <span key={i}>{(i + 1).toString().padStart(2, "0")}</span>
                       ))}
@@ -759,7 +759,7 @@ export default function RobloxPlayground() {
                   {/* Viewport Header */}
                   <div className="px-4 py-2 border-b border-white/[0.06] flex items-center justify-between bg-black/30">
                     <span className="font-mono text-[10px] text-zinc-400">Roblox Workspace Viewport</span>
-                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1">
+                    <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest flex items-center gap-1">
                       <Sparkles size={8} className="text-white/40 animate-pulse" />
                       3D Engine
                     </span>

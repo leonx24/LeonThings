@@ -510,8 +510,8 @@ export default function RobloxPlayground() {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="flex items-center gap-3.5 mb-14 font-mono uppercase tracking-[0.32em] text-[10px] text-white/35">
-          <span className="w-7 h-px bg-white/35" />
+        <div className="flex items-center gap-3.5 mb-14 font-mono uppercase tracking-[0.32em] text-[10px] text-zinc-400">
+          <span className="w-7 h-px bg-zinc-400" />
           03. Interactive Playground
         </div>
 
@@ -532,7 +532,7 @@ export default function RobloxPlayground() {
 
             {/* Presets/Files List */}
             <div className="space-y-3 mb-10 lg:mb-0">
-              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/35 block mb-4">
+              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-400 block mb-4">
                 Script Presets (Lua)
               </span>
               
@@ -567,7 +567,7 @@ export default function RobloxPlayground() {
                       <div className={`font-mono text-[12px] ${isActive ? "text-white" : "text-white/70"}`}>
                         {preset.name}
                       </div>
-                      <div className="text-[10px] text-white/40 mt-1 leading-[1.4]">
+                      <div className="text-[10px] text-zinc-400 mt-1 leading-[1.4]">
                         {preset.desc}
                       </div>
                     </div>

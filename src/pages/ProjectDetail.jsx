@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ArrowLeft, ArrowUpRight, Calendar, Tag, Layers } from "lucide-react"
 

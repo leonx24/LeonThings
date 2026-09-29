@@ -75,10 +75,19 @@ export default function RobloxPlayground() {
     { type: "sys", text: "Ready to run Lua script files. Type 'help()' or choose a preset.", time: "12:00:01" }
   ])
   const [activeTheme, setActiveTheme] = useState("default") // default, rainbow
+  const [hudStats, setHudStats] = useState({
+    gravity: 0.6,
+    wind: 0,
+    hasBodies: false
+  })
   
   const canvasRef = useRef(null)
   const codeEditorRef = useRef(null)
+  const preRef = useRef(null)
+  const gutterRef = useRef(null)
   const terminalEndRef = useRef(null)
+  const timersRef = useRef([])
+  const viewportSizeRef = useRef({ width: 400, height: 400, dpr: 1 })
   
   // Physics simulation state refs (to prevent closure stale variables in canvas loops)
   const bodiesRef = useRef([])
@@ -90,6 +99,25 @@ export default function RobloxPlayground() {
   })
   const mouseRef = useRef({ x: -1000, y: -1000, active: false })
   
+  // Timer helpers for execution cleanup
+  const scheduleTimeout = (fn, delay) => {
+    const id = setTimeout(fn, delay)
+    timersRef.current.push(id)
+    return id
+  }
+
+  const clearAllTimers = () => {
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current = []
+  }
+
+  // Cleanup all timers on unmount
+  useEffect(() => {
+    return () => {
+      clearAllTimers()
+    }
+  }, [])
+
   // Custom console print log helper
   const addLog = (type, text) => {
     const time = new Date().toTimeString().split(" ")[0]
@@ -116,15 +144,24 @@ export default function RobloxPlayground() {
     // Scale for high DPI
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect()
-      canvas.width = rect.width
-      canvas.height = rect.height
+      const dpr = window.devicePixelRatio || 1
+      canvas.width = rect.width * dpr
+      canvas.height = rect.height * dpr
+      viewportSizeRef.current = { width: rect.width, height: rect.height, dpr }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
     // Primary Physics Loop
     const loop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const { width, height } = viewportSizeRef.current
+      if (width === 0 || height === 0) {
+        animationId = requestAnimationFrame(loop)
+        return
+      }
+
+      ctx.clearRect(0, 0, width, height)
       
       const bodies = bodiesRef.current
       const params = physicsParamsRef.current
@@ -177,8 +214,8 @@ export default function RobloxPlayground() {
         if (body.x - body.radius < 0) {
           body.x = body.radius
           body.vx = -body.vx * 0.75
-        } else if (body.x + body.radius > canvas.width) {
-          body.x = canvas.width - body.radius
+        } else if (body.x + body.radius > width) {
+          body.x = width - body.radius
           body.vx = -body.vx * 0.75
         }
         
@@ -186,8 +223,8 @@ export default function RobloxPlayground() {
         if (body.y - body.radius < 0) {
           body.y = body.radius
           body.vy = -body.vy * 0.75
-        } else if (body.y + body.radius > canvas.height) {
-          body.y = canvas.height - body.radius
+        } else if (body.y + body.radius > height) {
+          body.y = height - body.radius
           body.vy = -body.vy * 0.65 // Ground inelastic friction
           body.vx *= 0.98           // Slide friction
         }
@@ -254,7 +291,11 @@ export default function RobloxPlayground() {
           ctx.beginPath()
           for (let t = 0; t < body.trail.length; t++) {
             const pt = body.trail[t]
-            ctx.lineTo(pt.x, pt.y)
+            if (t === 0) {
+              ctx.moveTo(pt.x, pt.y)
+            } else {
+              ctx.lineTo(pt.x, pt.y)
+            }
           }
           ctx.strokeStyle = `hsla(${body.hue}, 95%, 65%, 0.15)`
           ctx.lineWidth = body.radius * 0.6
@@ -294,6 +335,7 @@ export default function RobloxPlayground() {
 
   // Parse and execute script mock-up
   const handleExecute = () => {
+    clearAllTimers()
     addLog("run", "Executing code buffer...")
     
     // 1. Check for basic print commands in code
@@ -324,14 +366,14 @@ export default function RobloxPlayground() {
         index++
       }
 
-      // Parse Gravity changes
-      const gravMatch = trimmed.match(/workspace\.Gravity\s*=\s*([%d%.]+)/) || trimmed.match(/setGravity\s*\(\s*([%d%.]+)\s*\)/)
+      // Parse Gravity changes (Fixed JS regex)
+      const gravMatch = trimmed.match(/workspace\.Gravity\s*=\s*([\d.]+)/) || trimmed.match(/setGravity\s*\(\s*([\d.]+)\s*\)/)
       if (gravMatch) {
         customGravity = parseFloat(gravMatch[1]) * 5 // Scale up for visual speed
       }
 
-      // Parse Wind changes
-      const windMatch = trimmed.match(/workspace\.WindSpeed\s*=\s*([%d%.]+)/) || trimmed.match(/applyWindForce\s*\(\s*([%d%.]+)?\s*\)/)
+      // Parse Wind changes (Fixed JS regex)
+      const windMatch = trimmed.match(/workspace\.WindSpeed\s*=\s*([\d.]+)/) || trimmed.match(/applyWindForce\s*\(\s*([\d.]+)?\s*\)/)
       if (windMatch) {
         customWind = parseFloat(windMatch[1] || "0.5")
       }
@@ -358,27 +400,28 @@ export default function RobloxPlayground() {
       }
     })
 
-    // 2. Trigger logs sequentially
+    // 2. Trigger logs sequentially using managed scheduleTimeout
     if (logPrints.length === 0) {
       addLog("sys", "Compilation successful (0 warnings, 0 errors).")
     } else {
       logPrints.forEach((log) => {
-        setTimeout(() => {
+        scheduleTimeout(() => {
           addLog("lua", log.text)
         }, log.delay)
       })
     }
 
     // 3. Apply changes to live physics engine
-    setTimeout(() => {
+    scheduleTimeout(() => {
       physicsParamsRef.current.gravity = customGravity
       physicsParamsRef.current.wind = customWind
       physicsParamsRef.current.rainbow = isRainbow
       setActiveTheme(isRainbow ? "rainbow" : "default")
       
+      const { width, height } = viewportSizeRef.current
+
       // Spawn spheres if requested
       if (numSpheres > 0) {
-        const canvas = canvasRef.current
         const maxSpawn = Math.min(numSpheres, 100) // Cap to prevent lag
         const newBodies = []
         
@@ -386,7 +429,7 @@ export default function RobloxPlayground() {
           const r = Math.random() * 5 + 6
           const hue = Math.random() * 360
           newBodies.push({
-            x: Math.random() * (canvas.width - 40) + 20,
+            x: Math.random() * (Math.max(width, 100) - 40) + 20,
             y: Math.random() * -150 - 20, // Spawn offscreen top
             vx: Math.random() * 4 - 2,
             vy: Math.random() * 2,
@@ -402,9 +445,8 @@ export default function RobloxPlayground() {
 
       // Detonate explosion
       if (triggerExplode) {
-        const canvas = canvasRef.current
-        const ex = Math.random() * (canvas.width - 100) + 50
-        const ey = Math.random() * (canvas.height - 120) + 60
+        const ex = Math.random() * (Math.max(width, 160) - 100) + 50
+        const ey = Math.random() * (Math.max(height, 180) - 120) + 60
         
         physicsParamsRef.current.explosion = {
           x: ex,
@@ -413,11 +455,19 @@ export default function RobloxPlayground() {
           currentRadius: 0
         }
       }
+
+      // Update UI HUD state re-actively
+      setHudStats({
+        gravity: customGravity,
+        wind: customWind,
+        hasBodies: bodiesRef.current.length > 0
+      })
     }, logPrints.length * 100 + 50)
   }
 
   // Clear workspace physics body objects
   const handleClearWorkspace = () => {
+    clearAllTimers()
     bodiesRef.current = []
     physicsParamsRef.current = {
       gravity: 0.6,
@@ -426,15 +476,25 @@ export default function RobloxPlayground() {
       explosion: null
     }
     setActiveTheme("default")
+    setHudStats((prev) => ({
+      ...prev,
+      hasBodies: false
+    }))
     addLog("info", "Workspace cleared. Physics bodies destroyed.")
   }
 
   // Reset environmental configurations
   const handleResetEnvironment = () => {
+    clearAllTimers()
     physicsParamsRef.current.gravity = 0.6
     physicsParamsRef.current.wind = 0
     physicsParamsRef.current.rainbow = false
     setActiveTheme("default")
+    setHudStats((prev) => ({
+      ...prev,
+      gravity: 0.6,
+      wind: 0
+    }))
     addLog("info", "Environment variables reset to default (Gravity = 0.6).")
   }
 
@@ -454,39 +514,60 @@ export default function RobloxPlayground() {
     mouseRef.current.active = false
   }
 
+  // Sync scroll between Textarea, Pre highlight overlay, and line number Gutter
+  const handleEditorScroll = (e) => {
+    if (preRef.current) {
+      preRef.current.scrollTop = e.target.scrollTop
+      preRef.current.scrollLeft = e.target.scrollLeft
+    }
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = e.target.scrollTop
+    }
+  }
+
+  // HTML sanitization helper to prevent XSS in dangerouslySetInnerHTML
+  const escapeHtml = (str) => {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+  }
+
   // Syntactic highlights in text editor overlay
   const highlightCode = (rawCode) => {
-    // 1. Extract strings to prevent keyword highlighting inside them
-    const strings = []
-    let tempCode = rawCode.replace(/(["'].*?["'])/g, (match) => {
-      strings.push(match)
-      return `__LUA_STR_${strings.length - 1}__`
+    let escaped = escapeHtml(rawCode)
+
+    // 1. Extract comments first to prevent strings inside comments from being extracted
+    const comments = []
+    escaped = escaped.replace(/(--.*?)$/gm, (match) => {
+      comments.push(match)
+      return `___LUA_COMMENT_${comments.length - 1}___`
     })
 
-    // 2. Extract comments to prevent keyword highlighting inside comments
-    const comments = []
-    tempCode = tempCode.replace(/(--.*?)$/gm, (match) => {
-      comments.push(match)
-      return `__LUA_COMMENT_${comments.length - 1}__`
+    // 2. Extract strings to prevent keyword highlighting inside them
+    const strings = []
+    escaped = escaped.replace(/(["'].*?["'])/g, (match) => {
+      strings.push(match)
+      return `___LUA_STR_${strings.length - 1}___`
     })
 
     // 3. Highlight keywords
-    tempCode = tempCode
+    escaped = escaped
       .replace(/\b(local|function|end|for|do|then|if|else|elseif|return)\b/g, '<span class="text-pink-500">$1</span>')
       .replace(/\b(print)\b/g, '<span class="text-emerald-400">$1</span>')
       .replace(/(Instance\.new|game|workspace)/g, '<span class="text-sky-400">$1</span>')
 
-    // 4. Restore comments (with dark gray color)
-    tempCode = tempCode.replace(/__LUA_COMMENT_(\d+)__/g, (match, index) => {
-      return `<span class="text-white/30">${comments[parseInt(index)]}</span>`
-    })
-
-    // 5. Restore strings (with amber color)
-    tempCode = tempCode.replace(/__LUA_STR_(\d+)__/g, (match, index) => {
+    // 4. Restore strings (with amber color)
+    escaped = escaped.replace(/___LUA_STR_(\d+)___/g, (_, index) => {
       return `<span class="text-amber-300">${strings[parseInt(index)]}</span>`
     })
 
-    return tempCode
+    // 5. Restore comments (with dark gray color)
+    escaped = escaped.replace(/___LUA_COMMENT_(\d+)___/g, (_, index) => {
+      return `<span class="text-white/30">${comments[parseInt(index)]}</span>`
+    })
+
+    return escaped
   }
 
   return (
@@ -648,8 +729,11 @@ export default function RobloxPlayground() {
                   {/* Editor Code Area */}
                   <div className="flex-1 min-h-0 relative font-mono text-[12px] p-4 overflow-hidden flex">
                     {/* Line numbers gutter */}
-                    <div className="text-zinc-400 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col">
-                      {Array.from({ length: 15 }).map((_, i) => (
+                    <div 
+                      ref={gutterRef}
+                      className="text-zinc-500 text-right pr-3 select-none border-r border-white/[0.04] leading-[1.8] flex flex-col overflow-hidden"
+                    >
+                      {Array.from({ length: Math.max(15, code.split("\n").length) }).map((_, i) => (
                         <span key={i}>{(i + 1).toString().padStart(2, "0")}</span>
                       ))}
                     </div>
@@ -658,6 +742,7 @@ export default function RobloxPlayground() {
                     <div className="flex-1 relative h-full ml-3 leading-[1.8]">
                       {/* Highlight layer */}
                       <pre 
+                        ref={preRef}
                         className="
                           absolute 
                           inset-0 
@@ -666,6 +751,11 @@ export default function RobloxPlayground() {
                           word-break-all 
                           text-white/80 
                           overflow-hidden
+                          font-mono
+                          text-[12px]
+                          leading-[1.8]
+                          m-0
+                          p-0
                         "
                         dangerouslySetInnerHTML={{ __html: highlightCode(code) }}
                       />
@@ -675,6 +765,7 @@ export default function RobloxPlayground() {
                         ref={codeEditorRef}
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
+                        onScroll={handleEditorScroll}
                         aria-label="Lua Source Code Editor"
                         spellCheck="false"
                         className="
@@ -692,6 +783,11 @@ export default function RobloxPlayground() {
                           word-break-all
                           overflow-y-auto
                           focus:ring-0
+                          font-mono
+                          text-[12px]
+                          leading-[1.8]
+                          m-0
+                          p-0
                         "
                       />
                     </div>
@@ -830,13 +926,13 @@ export default function RobloxPlayground() {
                       <div className="flex items-center gap-1.5">
                         <span className="text-zinc-400">Gravity:</span>
                         <span className="text-white font-medium">
-                          {(physicsParamsRef.current.gravity / 5).toFixed(2)}
+                          {(hudStats.gravity / 5).toFixed(2)}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <span className="text-zinc-400">Wind:</span>
                         <span className="text-white font-medium">
-                          {physicsParamsRef.current.wind.toFixed(1)}
+                          {hudStats.wind.toFixed(1)}
                         </span>
                       </div>
                       {activeTheme === "rainbow" && (
@@ -847,7 +943,7 @@ export default function RobloxPlayground() {
                     </div>
 
                     {/* Canvas Hover Prompt overlay if empty */}
-                    {bodiesRef.current.length === 0 && (
+                    {!hudStats.hasBodies && (
                       <div className="
                         absolute 
                         inset-0 

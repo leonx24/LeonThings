@@ -53,7 +53,7 @@ export default function Works() {
                 uppercase
                 tracking-[0.2em]
                 text-[11px]
-                text-white/35
+                text-zinc-400
               "
             >
               {projects.length.toString().padStart(2, "0")} Projects
@@ -85,7 +85,7 @@ export default function Works() {
                   </div>
 
                   {/* Meta details header line */}
-                  <div className="flex justify-between items-center font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 mb-3">
+                  <div className="flex justify-between items-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 mb-3">
                     <span>{project.number}</span>
                     <span>{project.year}</span>
                   </div>
@@ -110,7 +110,7 @@ export default function Works() {
                     <span className="group-hover:translate-x-1 transition-transform duration-500 ease-out">
                       {project.title}
                     </span>
-                    <span className="font-sans text-lg text-white/35 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-500 ease-out">
+                    <span className="font-sans text-lg text-zinc-400 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-500 ease-out">
                       ↗
                     </span>
                   </h3>
@@ -134,7 +134,7 @@ export default function Works() {
                           text-[9px]
                           uppercase
                           tracking-[0.15em]
-                          text-white/35
+                          text-zinc-400
                           group-hover:text-white/55
                           group-hover:border-white/20
                           transition-all

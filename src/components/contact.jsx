@@ -9,6 +9,22 @@ export default function Contact() {
     message: "",
   })
   const [status, setStatus] = useState("idle") // idle, sending, success, error
+  const [activeTag, setActiveTag] = useState(null)
+
+  const tags = [
+    { label: "Commission", text: "Hi Leon, I'm interested in commissioning you for a Roblox/Luau scripting project. Here are the details: " },
+    { label: "Discord Bot", text: "Hi Leon, I'm looking to build/host a Discord automation bot with custom web hooks. Here is my concept: " },
+    { label: "Web Dev", text: "Hi Leon, I'd like to collaborate on a frontend React/Vite development project. Here is what we are building: " },
+    { label: "Just Saying Hi", text: "Hi Leon, just stumbled upon your portfolio and wanted to reach out. I really liked..." }
+  ]
+
+  const handleTagClick = (tag) => {
+    setActiveTag(tag.label)
+    setFormData((prev) => ({
+      ...prev,
+      message: tag.text
+    }))
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -90,7 +106,7 @@ export default function Contact() {
                   tracking-[0.32em]
                   text-[10px]
 
-                  text-white/35
+                  text-zinc-400
                 "
               >
                 <span className="w-7 h-px bg-white/35" />
@@ -158,7 +174,7 @@ export default function Contact() {
                           tracking-[0.28em]
                           text-[9px]
 
-                          text-white/35
+                          text-zinc-400
                         "
                       >
                         {item.label}
@@ -180,7 +196,7 @@ export default function Contact() {
 
                     <span
                       className="
-                        text-white/35
+                        text-zinc-400
 
                         transition-all
                         duration-500
@@ -214,7 +230,7 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Name
@@ -267,7 +283,7 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Email
@@ -320,11 +336,46 @@ export default function Contact() {
                     tracking-[0.28em]
                     text-[9px]
 
-                    text-white/35
+                    text-zinc-400
                   "
                 >
                   Message
                 </label>
+
+                {/* Topic tags pre-fill */}
+                <div className="flex flex-wrap gap-2 mb-4.5">
+                  {tags.map((tag) => {
+                    const isActive = activeTag === tag.label
+                    return (
+                      <button
+                        key={tag.label}
+                        type="button"
+                        onClick={() => handleTagClick(tag)}
+                        aria-label={`Select ${tag.label} topic`}
+                        className={`
+                          px-3 
+                          py-1.5 
+                          border 
+                          font-mono 
+                          text-[9px] 
+                          uppercase 
+                          tracking-wider 
+                          transition-all 
+                          duration-300
+                          cursor-hover
+                          ${
+                            isActive
+                              ? "bg-white text-black border-white shadow-[0_0_10px_rgba(255,255,255,0.15)] font-medium"
+                              : "bg-transparent border-white/10 hover:border-white/20 text-white/50 hover:text-white"
+                          }
+                        `}
+                      >
+                        {tag.label}
+                      </button>
+                    )
+                  })}
+                </div>
+
                 <textarea
                   id="message"
                   name="message"

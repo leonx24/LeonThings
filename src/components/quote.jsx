@@ -51,7 +51,7 @@ export default function Quote() {
             tracking-[0.28em]
             text-[10px]
 
-            text-white/35
+            text-zinc-400
           "
         >
           <span className="w-9 h-px bg-white/35" />

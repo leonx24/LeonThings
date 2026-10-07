@@ -58,7 +58,7 @@ export default function LazyImage({ src, alt, className, priority = false }) {
           className="
             w-full
             h-full
-            bg-white/[0.02]
+            bg-white/2
             animate-pulse
           "
         />

@@ -44,9 +44,9 @@ export default function Navbar() {
       isHash: true,
     },
     {
-      name: "Bot",
-      href: "/bot",
-      isHash: false,
+      name: "Playground",
+      href: isHome ? "#playground" : "/#playground",
+      isHash: true,
     },
     {
       name: "Services",
@@ -126,7 +126,7 @@ export default function Navbar() {
           "
         >
           {links.map((link) => {
-            const isRouterLink = !link.isHash || !isHome
+            const isRouterLink = !link.isExternal && (!link.isHash || !isHome)
             return (
               <li key={link.name}>
                 {isRouterLink ? (
@@ -135,7 +135,7 @@ export default function Navbar() {
                     className="
                       relative
 
-                      text-white/35
+                      text-zinc-400
 
                       transition-all
                       duration-500
@@ -167,7 +167,7 @@ export default function Navbar() {
                     className="
                       relative
 
-                      text-white/35
+                      text-zinc-400
 
                       transition-all
                       duration-500
@@ -201,6 +201,8 @@ export default function Navbar() {
 
         <button
           onClick={() => setOpen(!open)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={open}
           className="
             md:hidden
 
@@ -235,7 +237,7 @@ export default function Navbar() {
       >
         <div className="bg-black/95 backdrop-blur-xl">
           {links.map((link) => {
-            const isRouterLink = !link.isHash || !isHome
+            const isRouterLink = !link.isExternal && (!link.isHash || !isHome)
             return isRouterLink ? (
               <Link
                 key={link.name}
@@ -253,7 +255,7 @@ export default function Navbar() {
                   uppercase
                   tracking-[0.18em]
 
-                  text-white/35
+                  text-zinc-400
 
                   transition-colors
                   duration-300
@@ -280,7 +282,7 @@ export default function Navbar() {
                   uppercase
                   tracking-[0.18em]
 
-                  text-white/35
+                  text-zinc-400
 
                   transition-colors
                   duration-300

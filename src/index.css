@@ -61,3 +61,23 @@ button,
 .cursor-hover {
   cursor: none;
 }
+
+/* Soundwave Equalizer Animation for Status Bar */
+@keyframes soundwave {
+  0% { height: 3px; }
+  50% { height: 12px; }
+  100% { height: 4px; }
+}
+
+.animate-soundwave-1 {
+  animation: soundwave 0.7s ease-in-out infinite alternate;
+}
+.animate-soundwave-2 {
+  animation: soundwave 0.45s ease-in-out infinite alternate 0.15s;
+}
+.animate-soundwave-3 {
+  animation: soundwave 0.65s ease-in-out infinite alternate 0.3s;
+}
+.animate-soundwave-4 {
+  animation: soundwave 0.55s ease-in-out infinite alternate 0.05s;
+}

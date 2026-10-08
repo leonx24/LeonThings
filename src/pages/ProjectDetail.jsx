@@ -46,6 +46,11 @@ export default function ProjectDetail() {
   useSmoothScroll()
   const { slug } = useParams()
   const [heroImgLoaded, setHeroImgLoaded] = useState(false)
+  const [prevSlug, setPrevSlug] = useState(slug)
+  if (prevSlug !== slug) {
+    setPrevSlug(slug)
+    setHeroImgLoaded(false)
+  }
   const [copied, setCopied] = useState(false)
 
   const handleCopySnippet = () => {
@@ -111,7 +116,6 @@ export default function ProjectDetail() {
     // Execute immediately and after a short transition delay to ensure layout resolves
     resetScroll()
     const timer = setTimeout(resetScroll, 100)
-    
     return () => clearTimeout(timer)
   }, [slug])
 
@@ -215,7 +219,7 @@ export default function ProjectDetail() {
               <h1 className="font-serif text-[clamp(48px,7.5vw,120px)] leading-[0.95] tracking-[-0.02em] max-w-4xl">
                 {project.title}
               </h1>
-              </FadeUp>
+            </FadeUp>
 
             {/* Tags */}
             <FadeUp delay={0.5}>
@@ -282,7 +286,6 @@ export default function ProjectDetail() {
                   {project.overview}
                 </p>
               </ScrollReveal>
-
               {/* Telemetry Metrics Grid (if available) */}
               {project.metrics && (
                 <ScrollReveal delay={0.25}>
@@ -357,7 +360,6 @@ export default function ProjectDetail() {
               </ScrollReveal>
             </div>
           </div>
-
           {/* Solution - Right aligned */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 mb-24 lg:mb-32">
             <div className="lg:col-span-4">
@@ -393,7 +395,6 @@ export default function ProjectDetail() {
               <div className="absolute top-0 left-0 w-px h-16 bg-white/15" />
               <div className="absolute bottom-0 right-0 w-16 h-px bg-white/15" />
               <div className="absolute bottom-0 right-0 w-px h-16 bg-white/15" />
-
               <div className="flex items-center gap-3.5 mb-6 font-mono uppercase tracking-[0.32em] text-[10px] text-white/35">
                 <span className="w-7 h-px bg-white/35" />
                 03. Outcome
@@ -513,7 +514,6 @@ export default function ProjectDetail() {
           </div>
         </section>
       )}
-
       {/* ─── MODULE BREAKDOWN MATRIX ─── */}
       {project.moduleCategories && (
         <section className="relative z-10 px-8 lg:px-16 py-24 lg:py-32 border-t border-white/[0.06] bg-black">

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
 import { Play, Trash2, RotateCcw, FileCode, Terminal, HelpCircle, Sparkles } from "lucide-react"
-
 // Lua presets - Leon X v1.0.5
 const PRESETS = {
   stepped_tp: {

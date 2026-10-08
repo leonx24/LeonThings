@@ -1,7 +1,7 @@
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft, ArrowUpRight, Calendar, Tag, Layers } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, Calendar, Tag, Layers, Cpu } from "lucide-react"
 
 import { projects } from "../data/projects"
 import Navbar from "../components/navbar"
@@ -45,7 +45,6 @@ function ScrollReveal({ children, delay = 0, className = "" }) {
 export default function ProjectDetail() {
   useSmoothScroll()
   const { slug } = useParams()
-  const navigate = useNavigate()
   const [heroImgLoaded, setHeroImgLoaded] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -68,8 +67,14 @@ export default function ProjectDetail() {
     const stringRegex = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g
     const parts = line.split(stringRegex)
     const keywords = lang === "luau" 
-      ? ["local", "function", "return", "if", "then", "end", "and", "or", "nil", "game"]
+      ? ["local", "function", "return", "if", "then", "end", "and", "or", "nil", "game", "while", "do", "for", "in", "ipairs", "pairs", "true", "false"]
       : ["import", "export", "async", "function", "const", "let", "return", "await", "Promise", "boolean", "new", "false", "true"]
+
+    const apiMethods = [
+      "newcclosure", "getrawmetatable", "setreadonly", "print", "warn", 
+      "pcall", "task", "spawn", "wait", "secureLoad", "safeWrap", 
+      "setSplashProgress", "checkRateLimit", "getnamecallmethod"
+    ]
 
     return parts.map((part, i) => {
       if (part.startsWith('"') || part.startsWith("'")) {
@@ -80,7 +85,7 @@ export default function ProjectDetail() {
         if (keywords.includes(word)) {
           return <span key={`${i}-${j}`} className="text-white font-medium">{word}</span>
         }
-        if (word === "newcclosure" || word === "getrawmetatable" || word === "setreadonly" || word === "print" || word === "checkRateLimit" || word === "getnamecallmethod") {
+        if (apiMethods.includes(word)) {
           return <span key={`${i}-${j}`} className="text-white/95 underline decoration-white/20 underline-offset-2">{word}</span>
         }
         if (/^\d+$/.test(word)) {
@@ -107,7 +112,6 @@ export default function ProjectDetail() {
     resetScroll()
     const timer = setTimeout(resetScroll, 100)
     
-    setHeroImgLoaded(false)
     return () => clearTimeout(timer)
   }, [slug])
 
@@ -127,12 +131,12 @@ export default function ProjectDetail() {
 
   const currentIndex = projects.findIndex((p) => p.slug === slug)
   const nextProject = projects[(currentIndex + 1) % projects.length]
-  const prevProject = projects[(currentIndex - 1 + projects.length) % projects.length]
 
-  // Split overview into sentences for staggered animation
+  // Meta items with version support
   const metaItems = [
     { icon: Calendar, label: "Year", value: project.year },
-    { icon: Tag, label: "Category", value: project.tags.join(" · ") },
+    { icon: Tag, label: "Category", value: project.category || project.tags.join(" · ") },
+    ...(project.version ? [{ icon: Cpu, label: "Version", value: `${project.version} · ${project.status || "Active"}` }] : []),
     { icon: Layers, label: "Project", value: `${project.number} of ${String(projects.length).padStart(2, "0")}` },
   ]
 
@@ -211,7 +215,7 @@ export default function ProjectDetail() {
               <h1 className="font-serif text-[clamp(48px,7.5vw,120px)] leading-[0.95] tracking-[-0.02em] max-w-4xl">
                 {project.title}
               </h1>
-            </FadeUp>
+              </FadeUp>
 
             {/* Tags */}
             <FadeUp delay={0.5}>
@@ -239,7 +243,7 @@ export default function ProjectDetail() {
       {/* ─── PROJECT META BAR ─── */}
       <section className="relative z-10 border-t border-b border-white/[0.06]">
         <div className="max-w-6xl mx-auto px-8 lg:px-16">
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06]">
+          <div className={`grid grid-cols-1 ${metaItems.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3"} divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06]`}>
             {metaItems.map((item, i) => (
               <ScrollReveal key={item.label} delay={i * 0.1}>
                 <div className="py-6 sm:py-8 sm:px-8 first:sm:pl-0 last:sm:pr-0 flex items-center gap-4">
@@ -278,6 +282,20 @@ export default function ProjectDetail() {
                   {project.overview}
                 </p>
               </ScrollReveal>
+
+              {/* Telemetry Metrics Grid (if available) */}
+              {project.metrics && (
+                <ScrollReveal delay={0.25}>
+                  <div className="grid grid-cols-2 gap-3.5 mt-10 pt-8 border-t border-white/[0.08]">
+                    {project.metrics.map((m, i) => (
+                      <div key={i} className="p-3.5 bg-white/[0.015] border border-white/[0.06] rounded-sm hover:border-white/15 transition-colors">
+                        <span className="block font-mono text-[8px] uppercase tracking-[0.2em] text-white/35 mb-1">{m.label}</span>
+                        <span className="font-mono text-[13px] text-white font-medium">{m.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollReveal>
+              )}
             </div>
 
             {/* Primary Showcase Image */}
@@ -491,6 +509,106 @@ export default function ProjectDetail() {
                   </div>
                 </ScrollReveal>
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── MODULE BREAKDOWN MATRIX ─── */}
+      {project.moduleCategories && (
+        <section className="relative z-10 px-8 lg:px-16 py-24 lg:py-32 border-t border-white/[0.06] bg-black">
+          <div className="max-w-6xl mx-auto">
+            <ScrollReveal>
+              <div className="flex items-center gap-3.5 mb-6 font-mono uppercase tracking-[0.32em] text-[10px] text-white/35">
+                <span className="w-7 h-px bg-white/35" />
+                System Breakdown
+              </div>
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+                <div>
+                  <h3 className="font-serif text-[clamp(28px,3.5vw,48px)] leading-[1.1] text-white/95">
+                    Core Modules & Automation
+                  </h3>
+                  <p className="font-sans text-[13px] text-white/45 mt-3 max-w-xl font-light">
+                    Every module executes asynchronously within isolated thread barriers, preventing thread collisions and game client hangs.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 rounded-full shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  {project.version || "v1.0.5"} · 56 Modules Live
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+              {project.moduleCategories.map((cat, idx) => (
+                <ScrollReveal key={cat.title} delay={idx * 0.1}>
+                  <div className="p-8 border border-white/[0.07] bg-white/[0.015] hover:border-white/20 hover:bg-white/[0.025] transition-all duration-300 rounded-sm relative group h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/40">
+                          Suite 0{idx + 1}
+                        </span>
+                        <span className="font-mono text-[9px] text-white/30 uppercase tracking-widest border border-white/[0.06] px-2 py-0.5 rounded-sm">
+                          {cat.items.length} Features
+                        </span>
+                      </div>
+
+                      <h4 className="font-serif text-[22px] text-white mb-2 group-hover:text-white/95 transition-colors">
+                        {cat.title}
+                      </h4>
+                      <p className="font-sans text-[12px] text-white/45 mb-6 leading-relaxed font-light">
+                        {cat.desc}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 pt-5 border-t border-white/[0.06]">
+                      {cat.items.map((item, i) => (
+                        <div key={i} className="flex items-start gap-3 font-mono text-[11px] text-white/70">
+                          <span className="text-white/25 select-none shrink-0 mt-0.5">›</span>
+                          <span className="group-hover:text-white/90 transition-colors">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── CONTROLS & KEYBINDS CHEATSHEET ─── */}
+      {project.keybinds && (
+        <section className="relative z-10 px-8 lg:px-16 py-20 lg:py-28 border-t border-white/[0.06] bg-white/[0.005]">
+          <div className="max-w-6xl mx-auto">
+            <ScrollReveal>
+              <div className="flex items-center gap-3.5 mb-6 font-mono uppercase tracking-[0.32em] text-[10px] text-white/35">
+                <span className="w-7 h-px bg-white/35" />
+                Runtime Controls
+              </div>
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
+                <h3 className="font-serif text-[clamp(26px,3vw,42px)] leading-[1.1] text-white/95">
+                  Operational Keybinds
+                </h3>
+                <span className="font-mono text-[10px] text-white/35 uppercase tracking-widest">
+                  Quick-Access & Panic Triggers
+                </span>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {project.keybinds.map((kb, idx) => (
+                <ScrollReveal key={kb.key} delay={idx * 0.04}>
+                  <div className="flex items-center gap-3.5 p-3.5 border border-white/[0.06] bg-black/60 rounded-sm hover:border-white/15 transition-all">
+                    <kbd className="min-w-[42px] px-2.5 py-1.5 border border-white/20 bg-white/[0.04] rounded text-center font-mono text-[11px] font-semibold text-white shadow-inner select-none">
+                      {kb.key}
+                    </kbd>
+                    <span className="font-sans text-[11px] text-white/60 leading-snug">
+                      {kb.desc}
+                    </span>
+                  </div>
+                </ScrollReveal>
+              ))}
             </div>
           </div>
         </section>

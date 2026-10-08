@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import GridLines from "../components/gridLines"
@@ -24,7 +24,7 @@ function GlitchText({ text, className = "" }) {
   const [isGlitching, setIsGlitching] = useState(false)
   const intervalRef = useRef(null)
 
-  const triggerGlitch = () => {
+  const triggerGlitch = useCallback(() => {
     if (isGlitching) return
     setIsGlitching(true)
     
@@ -50,7 +50,7 @@ function GlitchText({ text, className = "" }) {
         setIsGlitching(false)
       }
     }, 50)
-  }
+  }, [text, isGlitching])
 
   useEffect(() => {
     // Auto-glitch on mount
@@ -59,13 +59,13 @@ function GlitchText({ text, className = "" }) {
       clearTimeout(timer)
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [])
+  }, [triggerGlitch])
 
   // Periodic glitch
   useEffect(() => {
     const periodic = setInterval(triggerGlitch, 5000 + Math.random() * 3000)
     return () => clearInterval(periodic)
-  }, [])
+  }, [triggerGlitch])
 
   return (
     <span

@@ -1,48 +1,51 @@
 import { useState, useEffect, useRef } from "react"
 import { Play, Trash2, RotateCcw, FileCode, Terminal, HelpCircle, Sparkles } from "lucide-react"
 
-// Lua presets
+// Lua presets - Leon X v1.0.5
 const PRESETS = {
-  spheres: {
-    name: "spawner.lua",
-    desc: "Spawns bouncing physical bodies in the viewport",
-    code: `-- Preset: Sphere Spawner
-local count = 25
-local radius = 8
+  stepped_tp: {
+    name: "stepped_tp.lua",
+    desc: "Safe stepped teleportation & physics vector simulation",
+    code: `-- Leon X: Stepped Teleport Engine
+local SteppedTP = {}
+local count = 28
+local radius = 7
 
+print("[LeonX] Initializing Stepped TP with safe incremental delta...")
 for i = 1, count do
-    task.wait(0.04)
+    task.wait(0.03)
     Instance.new("Part", {
         Shape = "Ball",
         Size = radius,
-        Color = Color3.random(),
-        Position = Vector2.new(math.random(40, 420), 40)
+        Color = Color3.fromRGB(56, 189, 248),
+        Position = Vector2.new(math.random(60, 380), 40)
     })
-    print("Spawned Sphere #" .. i)
+    print("Teleport Node #" .. i .. " committed (Zero Rubberband)")
 end
-print("Execution completed. Enjoy the physics!")`
+print("[SteppedTP] Execution complete. 28 physics nodes active.")`
   },
   gravity: {
-    name: "gravity_mod.lua",
-    desc: "Modifies workplace gravity & applies wind forces",
-    code: `-- Preset: Gravity & Wind Mod
+    name: "gravity_physics.lua",
+    desc: "Low-gravity field manipulation & directional wind drift",
+    code: `-- Leon X: Environmental Physics Modifier
 local workspace = game:GetService("Workspace")
 
--- Lower gravity (standard is 0.6)
+-- Dynamic Gravity & Aerodynamic Wind
 workspace.Gravity = 0.12
-workspace.WindSpeed = 0.8
+workspace.WindSpeed = 1.0
 
-print("Success: Gravity set to 12%.")
-print("Applied global wind factor: " .. workspace.WindSpeed)
-print("Click and fling spheres to see the drift!")`
+print("[LeonX] Environment modifier loaded.")
+print("» Gravity set to 12% (Low Orbit Simulation)")
+print("» Global Wind Vector: " .. workspace.WindSpeed)
+print("Hover and fling bodies to inspect trajectory drift.")`
   },
   nuke: {
-    name: "orb_explosion.lua",
-    desc: "Detonates a localized blast wave pushing all bodies",
-    code: `-- Preset: Orb Explosion
-local power = 380
-local x = math.random(100, 360)
-local y = math.random(80, 220)
+    name: "hitbox_shockwave.lua",
+    desc: "Expands radial hitbox & detonates kinetic impulse wave",
+    code: `-- Leon X: Hitbox Expander & Kinetic Detonation
+local power = 420
+local x = math.random(120, 320)
+local y = math.random(90, 210)
 
 task.spawn(function()
     local exp = Instance.new("Explosion")
@@ -51,28 +54,31 @@ task.spawn(function()
     exp:Hit()
 end)
 
-print("DETONATION: Explosion triggered at (" .. x .. ", " .. y .. ")")
-print("Shockwave expanding with power: " .. power)`
+print("[HitboxExpander] Radial shockwave triggered at (" .. x .. ", " .. y .. ")")
+print("Kinetic impulse expanding with power: " .. power .. " studs")`
   },
-  rainbow: {
-    name: "rainbow_chaos.lua",
-    desc: "Toggles color-cycling trail effects on all parts",
-    code: `-- Preset: Rainbow Chaos
+  cybernoir: {
+    name: "cybernoir_theme.lua",
+    desc: "Switches dynamic palette to CyberNoir glow spectrum",
+    code: `-- Leon X: CyberNoir Theme Engine v5.1
+local Library = getgenv().LeonX_Library
 local workspace = game:GetService("Workspace")
+
 workspace.Theme = "Rainbow"
 workspace.WindSpeed = 1.8
 
-print("Rainbow cycle active!")
-print("All bodies will now glow and leave color trails.")`
+print("[CyberNoir] Switched theme palette to CyberNoir Glow.")
+print("[ThemeMgr] Flat-registry updated across all 56 modules.")
+print("Dynamic color cycle active on all active rendering parts.")`
   }
 }
 
 export default function RobloxPlayground() {
-  const [selectedPreset, setSelectedPreset] = useState("spheres")
-  const [code, setCode] = useState(PRESETS.spheres.code)
+  const [selectedPreset, setSelectedPreset] = useState("stepped_tp")
+  const [code, setCode] = useState(PRESETS.stepped_tp.code)
   const [logs, setLogs] = useState([
-    { type: "sys", text: "Leon X Environment initialized successfully.", time: "12:00:00" },
-    { type: "sys", text: "Ready to run Lua script files. Type 'help()' or choose a preset.", time: "12:00:01" }
+    { type: "sys", text: "[LeonX v1.0.5] CyberNoir Hook & Module Engine initialized.", time: "12:00:00" },
+    { type: "sys", text: "Ready to run Luau scripts. Choose a preset or edit source.", time: "12:00:01" }
   ])
   const [activeTheme, setActiveTheme] = useState("default") // default, rainbow
   const [hudStats, setHudStats] = useState({
@@ -604,10 +610,9 @@ export default function RobloxPlayground() {
               <h3 className="font-serif text-[clamp(32px,3.8vw,52px)] text-white leading-[1.1] mb-6">
                 Test the <span className="italic text-white/60">script execution</span> environment.
               </h3>
-              <p className="text-white/60 text-[13px] leading-[1.85] mb-8">
-                In my primary scripting client, <strong>Leon X</strong>, performance and responsive interfaces are crucial. 
-                Interact with this simulated execution board. Choose one of the preset Lua script files in the explorer, 
-                hit execute, and watch the physics react. Hover over the canvas to affect bodies with gravity fields.
+              <p className="text-white/60 text-[13px] leading-[1.85] mb-8 font-light">
+                In my primary scripting client, <strong>Leon X (v1.0.5)</strong>, sub-millisecond execution and responsive CyberNoir interfaces are crucial. 
+                Interact with this simulated Luau execution board: select a script preset from the modular explorer, run execution, and inspect real-time physics telemetry. Hover over the canvas to affect bodies with dynamic gravity fields.
               </p>
             </div>
 
@@ -692,7 +697,7 @@ export default function RobloxPlayground() {
                   <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
                   <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
                   <span className="font-mono text-[10px] text-white/50 tracking-wider ml-4">
-                    LEON X v2.4.2 [EXECUTOR CLIENT]
+                    LEON X v1.0.5 [CYBERNOIR ENGINE]
                   </span>
                 </div>
                 <div className="hidden sm:flex items-center gap-3 font-mono text-[9px]">

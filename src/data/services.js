@@ -10,7 +10,7 @@ export const services = [
     id: "02",
     title: "Roblox\nSystems",
     desc: "Writing optimized Luau script engines, managing data serialization, networking protocols, and game client systems.",
-    tech: ["Luau", "OOP Engine", "Hook APIs", "Security"]
+    tech: ["Luau", "CyberNoir Engine", "Modular OOP", "Anti-Detection"]
   },
 
   {

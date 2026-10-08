@@ -71,12 +71,20 @@ export default function Works() {
                 to={`/project/${project.slug}`}
                 className="block group"
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col p-6 -m-6 rounded-xl border border-transparent hover:border-white/[0.07] hover:bg-white/[0.015] transition-all duration-500">
                   {/* Visual Project Frame */}
-                  <div className="relative aspect-[16/10] overflow-hidden border border-white/[0.08] bg-white/[0.02] mb-6">
+                  <div className="relative aspect-[16/10] overflow-hidden border border-white/[0.08] bg-white/[0.02] mb-6 rounded-sm">
                     {/* Subtle hover gradient shine */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500 z-10" />
                     
+                    {/* Live status pill overlay */}
+                    {project.version && (
+                      <div className="absolute top-3.5 right-3.5 z-20 font-mono text-[9px] tracking-wider uppercase bg-black/75 border border-white/15 backdrop-blur-md px-2.5 py-1 rounded-full text-white/90 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        {project.version}
+                      </div>
+                    )}
+
                     <LazyImage
                       src={project.gallery[0]}
                       alt={project.title}
@@ -86,7 +94,12 @@ export default function Works() {
 
                   {/* Meta details header line */}
                   <div className="flex justify-between items-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 mb-3">
-                    <span>{project.number}</span>
+                    <span className="flex items-center gap-2">
+                      <span>{project.number}</span>
+                      {project.status && (
+                        <span className="text-white/30 text-[9px]">· {project.status}</span>
+                      )}
+                    </span>
                     <span>{project.year}</span>
                   </div>
 
@@ -102,7 +115,7 @@ export default function Works() {
                       items-center
                       justify-between
                       
-                      group-hover:text-white/85
+                      group-hover:text-white/95
                       transition-colors
                       duration-300
                     "
@@ -116,7 +129,7 @@ export default function Works() {
                   </h3>
 
                   {/* Summary / description */}
-                  <p className="font-sans text-[12px] leading-[1.8] text-white/50 mb-5 mt-2 line-clamp-2">
+                  <p className="font-sans text-[12px] leading-[1.8] text-white/50 mb-5 mt-2 line-clamp-2 font-light">
                     {project.overview}
                   </p>
 
@@ -135,11 +148,12 @@ export default function Works() {
                           uppercase
                           tracking-[0.15em]
                           text-zinc-400
-                          group-hover:text-white/55
+                          group-hover:text-white/70
                           group-hover:border-white/20
                           transition-all
                           duration-500
                           ease-out
+                          rounded-sm
                         "
                       >
                         {tag}

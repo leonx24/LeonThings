@@ -75,8 +75,8 @@ export default function Navbar() {
 
         ${
           scrolled
-            ? "bg-black"
-            : ""
+            ? "bg-black/85 backdrop-blur-md border-b border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
+            : "bg-transparent border-b border-transparent"
         }
       `}
     >

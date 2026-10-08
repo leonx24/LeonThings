@@ -38,16 +38,19 @@ export default function Contact() {
     setStatus("sending")
 
     try {
-      // Replace with your EmailJS credentials
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_ecwex65"
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "template_otfuenn"
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "RHsH6QtIq6dXMYYq6"
+
       await emailjs.send(
-        "service_ecwex65", // Get from EmailJS dashboard
-        "template_otfuenn", // Get from EmailJS dashboard
+        serviceId,
+        templateId,
         {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
         },
-        "RHsH6QtIq6dXMYYq6" // Get from EmailJS dashboard
+        publicKey
       )
 
       setStatus("success")

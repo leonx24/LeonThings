@@ -109,7 +109,7 @@ export default function About() {
           <div className="grid grid-cols-3 gap-4 mb-12">
             {[
               { value: "02+", label: "Years\nActive" },
-              { value: "02", label: "Projects\nFeatured" },
+              { value: projects.length.toString().padStart(2, "0"), label: "Projects\nFeatured" },
               { value: "1.2k+", label: "Users\nServed" },
             ].map((stat, i) => (
               <div 
@@ -206,7 +206,7 @@ export default function About() {
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-zinc-400">Status</span>
-                <span className="text-[11px] font-mono text-white/80">Refining Leon X Client</span>
+                <span className="text-[11px] font-mono text-white/90">Refining Leon X Client v1.0.5</span>
               </div>
             </div>
             

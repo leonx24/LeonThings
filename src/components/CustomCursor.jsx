@@ -1,19 +1,11 @@
-import { useEffect, useState } from "react"
-import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 
 export default function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-
-  const cursorX = useMotionValue(-100)
-  const cursorY = useMotionValue(-100)
-
-  const springConfig = { damping: 25, stiffness: 400 }
-  const cursorXSpring = useSpring(cursorX, springConfig)
-  const cursorYSpring = useSpring(cursorY, springConfig)
+  const dotRef = useRef(null)
+  const ringRef = useRef(null)
 
   useEffect(() => {
-    // Check if device is mobile/touch
     const checkMobile = () => {
       setIsMobile(
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -24,115 +16,80 @@ export default function CustomCursor() {
 
     checkMobile()
     window.addEventListener("resize", checkMobile)
+    if (isMobile) {
+      return () => window.removeEventListener("resize", checkMobile)
+    }
 
-    // Don't show cursor on mobile
-    if (isMobile) return
+    let targetX = -100
+    let targetY = -100
+    let ringX = -100
+    let ringY = -100
+    let hovering = false
+    let rafId = null
 
     const moveCursor = (e) => {
-      cursorX.set(e.clientX)
-      cursorY.set(e.clientY)
+      targetX = e.clientX
+      targetY = e.clientY
+      if (dotRef.current) {
+        const s = hovering ? 0.55 : 1
+        dotRef.current.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%) scale(${s})`
+      }
     }
 
-    const handleMouseEnter = () => setIsHovering(true)
-    const handleMouseLeave = () => setIsHovering(false)
+    const handleMouseOver = (e) => {
+      const hit = Boolean(
+        e.target?.closest?.(
+          'a, button, [role="button"], input, textarea, .cursor-hover'
+        )
+      )
+      if (hit !== hovering) {
+        hovering = hit
+        if (ringRef.current) {
+          ringRef.current.style.borderColor = hovering
+            ? "rgba(234, 179, 75, 0.9)"
+            : "rgba(247, 231, 196, 0.42)"
+          ringRef.current.style.backgroundColor = hovering
+            ? "rgba(234, 179, 75, 0.1)"
+            : "transparent"
+        }
+      }
+    }
 
-    // Track mouse movement
-    window.addEventListener("mousemove", moveCursor)
+    const animateRing = () => {
+      rafId = requestAnimationFrame(animateRing)
+      ringX += (targetX - ringX) * 0.24
+      ringY += (targetY - ringY) * 0.24
+      if (ringRef.current) {
+        const rs = hovering ? 1.42 : 1
+        ringRef.current.style.transform = `translate3d(${ringX.toFixed(1)}px, ${ringY.toFixed(1)}px, 0) translate(-50%, -50%) scale(${rs})`
+      }
+    }
 
-    // Track hover on interactive elements
-    const interactiveElements = document.querySelectorAll(
-      'a, button, [role="button"], .cursor-hover'
-    )
-
-    interactiveElements.forEach((el) => {
-      el.addEventListener("mouseenter", handleMouseEnter)
-      el.addEventListener("mouseleave", handleMouseLeave)
-    })
+    window.addEventListener("mousemove", moveCursor, { passive: true })
+    window.addEventListener("mouseover", handleMouseOver, { passive: true })
+    rafId = requestAnimationFrame(animateRing)
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId)
       window.removeEventListener("mousemove", moveCursor)
+      window.removeEventListener("mouseover", handleMouseOver)
       window.removeEventListener("resize", checkMobile)
-
-      interactiveElements.forEach((el) => {
-        el.removeEventListener("mouseenter", handleMouseEnter)
-        el.removeEventListener("mouseleave", handleMouseLeave)
-      })
     }
-  }, [cursorX, cursorY, isMobile])
+  }, [isMobile])
 
-  // Don't render on mobile
   if (isMobile) return null
 
   return (
     <>
-      {/* Main cursor dot */}
-      <motion.div
-        className="
-          fixed
-          top-0
-          left-0
-
-          w-2
-          h-2
-
-          bg-white
-
-          rounded-full
-
-          pointer-events-none
-
-          z-[9999]
-
-          mix-blend-difference
-        "
-        style={{
-          x: cursorX, // Instant alignment with mouse pointer (zero delay feel)
-          y: cursorY, // Instant alignment with mouse pointer (zero delay feel)
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          scale: isHovering ? 0.5 : 1,
-        }}
-        transition={{
-          duration: 0.2,
-        }}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#fbe39e] shadow-[0_0_6px_rgba(234,179,75,0.8)] pointer-events-none z-[9999] will-change-transform transition-transform duration-75"
+        style={{ transform: "translate3d(-100px, -100px, 0)" }}
       />
-
-      {/* Cursor ring/outline */}
-      <motion.div
-        className="
-          fixed
-          top-0
-          left-0
-
-          w-8
-          h-8
-
-          border
-          border-white/30
-
-          rounded-full
-
-          pointer-events-none
-
-          z-[9998]
-
-          mix-blend-difference
-        "
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          scale: isHovering ? 1.5 : 1,
-          opacity: isHovering ? 0.5 : 1,
-        }}
-        transition={{
-          duration: 0.3,
-        }}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-[#f7e7c4]/40 pointer-events-none z-[9998] will-change-transform transition-colors duration-200"
+        style={{ transform: "translate3d(-100px, -100px, 0)" }}
       />
     </>
   )

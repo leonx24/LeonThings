@@ -59,7 +59,7 @@ export default function Preloader({ onComplete }) {
         <motion.div
           className="
             fixed inset-0 z-[99999]
-            bg-black
+            bg-[#091d2c]
             flex flex-col items-center justify-center
             select-none
           "
@@ -77,14 +77,14 @@ export default function Preloader({ onComplete }) {
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
                 <span className="
-                  font-serif
-                  text-[clamp(32px,6vw,64px)]
+                  font-editorial
+                  text-[clamp(36px,6vw,72px)]
                   leading-none
                   tracking-[-0.02em]
-                  text-white
+                  text-[#f4efe6]
                 ">
                   Leon
-                  <span className="text-white/20">.</span>
+                  <span className="text-[#ffd27d]">.</span>
                 </span>
               </motion.div>
             </div>
@@ -92,21 +92,21 @@ export default function Preloader({ onComplete }) {
             {/* Subtitle */}
             <motion.span
               className="
-                font-mono text-[9px] uppercase tracking-[0.4em]
-                text-white/25
+                font-mono-code text-[10px] uppercase tracking-[0.4em]
+                text-[#b8c7d4]/70
               "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              Creative Developer
+              Harbor · Creative Developer
             </motion.span>
 
             {/* Progress bar */}
             <div className="w-48 relative">
-              <div className="h-px bg-white/[0.06] w-full" />
+              <div className="h-px bg-[#f4efe6]/10 w-full" />
               <motion.div
-                className="absolute top-0 left-0 h-px bg-white/40"
+                className="absolute top-0 left-0 h-px bg-[#ffd27d]/80"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.1, ease: "linear" }}
@@ -116,8 +116,8 @@ export default function Preloader({ onComplete }) {
               <motion.span
                 className="
                   block mt-4 text-center
-                  font-mono text-[10px] tracking-[0.2em]
-                  text-white/20 tabular-nums
+                  font-mono-code text-[10px] tracking-[0.2em]
+                  text-[#b8c7d4]/60 tabular-nums
                 "
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -130,7 +130,7 @@ export default function Preloader({ onComplete }) {
 
           {/* Bottom decorative line */}
           <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-8 h-px bg-white/[0.06]"
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-8 h-px bg-[#ffd27d]/20"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
